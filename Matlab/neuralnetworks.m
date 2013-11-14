@@ -107,6 +107,7 @@ while(1) %Loop till convergence
         [d_W_num d_b_num] = numerical_gradients(W, b, ip(:,i), op(i), NN, a, z, sig, d_sig);
         
         for l = 1:n_l-1
+            %Gradient checking
             if(norm(d_W_tmp{l} - d_W_num{l}) > 0.00000001)
                 sprintf('Gradient Not same')
             end
@@ -117,6 +118,9 @@ while(1) %Loop till convergence
             d_b{l} = d_b{l} + d_b_tmp{l};
         end
     end
+    
+    %Vectorized Implementation of above code
+    [a, z] = forward_pass(W,b,ip,NN);
     
     %Update the wieghts 
     for l = 1:n_l-1
