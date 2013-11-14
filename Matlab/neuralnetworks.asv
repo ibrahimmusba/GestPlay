@@ -55,12 +55,12 @@ op = Y_train;
 
 %%
 %Define the neural network
-n_ip = d;                   %Number of input features
-n_op = 1;                   %Number of op layers
-n_l = 5;               %Number of layers including ip and op layers
-n_nodes = [n_ip 5 5 5 n_op];  %Number of nodes per layer
+n_ip = d;                       %Number of input features
+n_op = 1;                       %Number of op layers
+n_l = 5;                        %Number of layers including ip and op layer
+n_nodes = [n_ip 5 5 5 n_op];    %Number of nodes per layer
 
-alpha = 0.1;            %Learning rate (or) gradient des
+alpha = 0.1;            %Learning rate (or) gradient descent step size
 lambda = 0.0;           %Regularization constant
 
 NN{1} = n_ip;
@@ -104,6 +104,9 @@ while(1) %Loop till convergence
     for i = 1:m
         [a, z] = forward_pass(W,b,ip(:,i),NN);
         [d_W_tmp d_b_tmp] = backpropagate(W, b, ip(:,i), op(i), NN, a, z, sig, d_sig);
+        [d_W_num d_b_num] = numerical_gradients(W, b, ip(:,i), op(i), NN, a, z, sig, d_sig);
+        
+        
         for l = 1:n_l-1
             d_W{l} = d_W{l} + d_W_tmp{l};
             d_b{l} = d_b{l} + d_b_tmp{l};

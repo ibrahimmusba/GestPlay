@@ -1,9 +1,9 @@
 function [d_W d_b] = backpropagate(W, b, ip, op, NN, a, z, sig, d_sig)
 
-n_ip = NN{1};                  
-n_op = NN{2};                  
+%n_ip = NN{1};                  
+%n_op = NN{2};                  
 n_l = NN{3};              
-n_nodes = NN{4};
+%n_nodes = NN{4};
 
 %Compute all gamma
 %gamma = d(error)/d(z)

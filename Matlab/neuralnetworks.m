@@ -104,7 +104,15 @@ while(1) %Loop till convergence
     for i = 1:m
         [a, z] = forward_pass(W,b,ip(:,i),NN);
         [d_W_tmp d_b_tmp] = backpropagate(W, b, ip(:,i), op(i), NN, a, z, sig, d_sig);
+        [d_W_num d_b_num] = numerical_gradients(W, b, ip(:,i), op(i), NN, a, z, sig, d_sig);
+        
         for l = 1:n_l-1
+            if(norm(d_W_tmp{l} - d_W_num{l}) > 0.00000001)
+                sprintf('Gradient Not same')
+            end
+            if(norm(d_b_tmp{l} - d_b_num{l}) > 0.000001)
+                sprintf('Gradient b Not same')
+            end
             d_W{l} = d_W{l} + d_W_tmp{l};
             d_b{l} = d_b{l} + d_b_tmp{l};
         end

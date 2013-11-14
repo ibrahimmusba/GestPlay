@@ -1,0 +1,47 @@
+function [d_W d_b] = numerical_gradients( W, b, ip, op, NN, a, z, sig, d_sig )
+%numerical_gradients 
+%   Computes gradients for each weight numerically to compare with the
+%   backpropagation algorithm
+
+n_l = NN{3};
+
+[a, ~] = forward_pass(W,b,ip,NN);
+f = 1/2*(a{n_l} - op)^2;
+
+for l = 1:n_l-1
+        d_W{l} = zeros(size(W{l}));
+        d_b{l} = zeros(size(b{l}));
+end
+    
+epsilon = 0.0001;
+
+for l = 1:n_l-1
+    for i = 1:size(W{l},1)
+        %Compute all W gradients
+        for j = 1:size(W{l},2)
+            
+            W_tmp = W;
+            W_tmp{n_l}(i,j) = W_tmp{n_l}(i,j) + epsilon;
+            [a, ~] = forward_pass(W,b,ip,NN);
+            f_plus = 1/2*(a{n_l} - op)^2;
+            
+            W_tmp = W;
+            W_tmp{n_l}(i,j) = W_tmp{n_l}(i,j) - epsilon;
+            [a, ~] = forward_pass(W,b,ip,NN);
+            f_minus = 1/2*(a{n_l} - op)^2;
+            
+            d_W{l}(i,j) = (f_plus - f_minus)/(2*epsilon);
+        end
+        
+        %Compute all b gradients
+        b_tmp = b;
+        b_tmp{l}(i) = b_tmp{l}(i) + epsilon;
+        [a, ~] = forward_pass(W,b,ip,NN);
+        
+    end
+end
+
+
+
+end
+
