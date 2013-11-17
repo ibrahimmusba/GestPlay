@@ -1,0 +1,19 @@
+function [Ixgrad, Iygrad, Gmag, Gdir] = igradient(I)
+%igradient:
+% I/P: Color Image
+
+[height, width, channels] = size(I);
+
+hx = [-0.5 0 0.5];
+hy = hx';
+
+Ixgrad = imfilter(double(I),hx,'replicate');
+Iygrad = imfilter(double(I),hy,'replicate');
+
+Gmag = sqrt(Ixgrad.^2 + Iygrad.^2);
+Gdir = atan2(double(Iygrad), double(Ixgrad));
+
+if channels == 3
+    [Gmag ind] = max(Gmag,[],3);
+    Gdir = Gdir(:,:,ind)
+end
