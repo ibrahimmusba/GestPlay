@@ -1,33 +1,19 @@
-function plotHistogram( cellMag, cellDir, x, y )
+function plotHistogram( hist, y, x)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-[width, height] = size(cellMag);
 
-%Find the index of max magnitude
-[valr, maxrows] = max(cellMag);
-[valc, maxcol] = max(valr);
-maxrow = maxrows(maxcol);
+direction = [10:20:170]*pi/180 + pi/2;
 
 r = 3;
 
+[maxVal maxInd] = max(hist);
 
-%plot all 
-cellMagUnit = cellMag ./ valc;
-
-% xOffsets = r.*cellMagUnit.*cos(cellDir);
-% yOffsets = r.*cellMagUnit.*sin(cellDir);
-% for i = 1:length(xOffsets(:))
-%     linesegments = [x + xOffsets(i), y + yOffsets(i); x - xOffsets(i), y - yOffsets(i)];
-%     plot(linesegments(:,1),linesegments(:,2));
-% end
-
-if cellMag(maxrow, maxcol) > 40
-xOffset = r*cos(cellDir(maxrow, maxcol));
-yOffset = r*sin(cellDir(maxrow, maxcol));
+xOffset = r*cos(direction(maxInd));
+yOffset = r*sin(direction(maxInd));
 
 linesegment = [x + xOffset , y + yOffset; x - xOffset , y - yOffset ] ;
 
-plot(linesegment(:,1),linesegment(:,2),'r','LineWidth',2);
-end
+plot(linesegment(:,1),linesegment(:,2),'r','LineWidth',min(((maxVal/50)+0.01),6)  );
+
 end
 

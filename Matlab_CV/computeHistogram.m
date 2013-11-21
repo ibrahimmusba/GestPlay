@@ -3,7 +3,7 @@ function h = computeHistogram(cellMag, cellDir, numBins)
 h = zeros(1,numBins);
 
 % The bins will be 0 to 180 (unsigned)
-cellDir = abs(cellDir);
+cellDir = cellDir+(pi.*(cellDir<0));
 binSize = pi/numBins;
 
 %The bin to which the gradient should fall. 
@@ -19,15 +19,22 @@ bin = cellDir/binSize;
 lower_bin = mod(floor(bin),numBins) + 1;
 upper_bin = mod(ceil(bin),numBins) + 1;
 
+center_bin = mod(round(bin),numBins) + 1;
+
+
 perc_lower = ceil(bin) - bin;
-perc_upper = bin - floor(bin);
+perc_upper = (bin - floor(bin))+(bin == floor(bin));
 
 
 
-%Can this ve vectorized?
+
+%Can this be vectorized?
 for i = 1:length(cellMag)
-    h(upper_bin(i)) = cellMag(i)*perc_upper(i);
-    h(lower_bin(i)) = cellMag(i)*perc_lower(i);
+    h(upper_bin(i)) = h(upper_bin(i)) +  cellMag(i)*perc_upper(i);
+    h(lower_bin(i)) = h(lower_bin(i)) +  cellMag(i)*perc_lower(i);
 end
+% for i = 1:length(cellMag)
+%     h(center_bin(i)) = h(center_bin(i)) + cellMag(i);
+% end
 
 end

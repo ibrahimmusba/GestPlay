@@ -1,7 +1,7 @@
 function H = HoG(I)
 %Input Image
 
-shouldPlot = true;
+shouldPlot = false;
 
 if shouldPlot
     figure(1);
@@ -47,7 +47,7 @@ for i = 1:numRowCells
     iInd = ((i-1)*cellSize)+1;
     
     for j = 1:numColCells
-        
+
         jInd = ((j-1)*cellSize)+1;
         rows = iInd : iInd + cellSize - 1;
         cols = jInd : jInd + cellSize - 1;
@@ -58,7 +58,7 @@ for i = 1:numRowCells
         cellHistogram(i,j,:) = computeHistogram(cellMag(:), cellDir(:), numBins);
         
         if shouldPlot
-            plotHistogram(cellMag, cellDir, rows(round(end/2)), cols(round(end/2)));
+            plotHistogram(cellHistogram(i,j,:), rows(round(end/2)), cols(round(end/2)));
         end
     end
 end
