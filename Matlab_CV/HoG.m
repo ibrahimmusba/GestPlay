@@ -1,6 +1,14 @@
 function H = HoG(I)
 %Input Image
 
+shouldPlot = true;
+
+if shouldPlot
+    figure(1);
+    imshow(I);
+    hold on;
+end
+
 H = [];
 
 % Values taken from the HoG paper
@@ -48,6 +56,10 @@ for i = 1:numRowCells
         cellDir = Gdir(rows, cols);
         
         cellHistogram(i,j,:) = computeHistogram(cellMag(:), cellDir(:), numBins);
+        
+        if shouldPlot
+            plotHistogram(cellMag, cellDir, rows(round(end/2)), cols(round(end/2)));
+        end
     end
 end
 
@@ -62,8 +74,8 @@ for i = 1:numRowCells-1
             blockHistogram = blockHistogram./mag;
         end
         
-        %Order doesnt matter as long as it is consistent
-        H = [H; blockHistogram(:)];
+        %Order doesnt matter as long as it is consistent 
+        H = [H; blockHistogram(:)]; %Column Vector
     end
 end
 
