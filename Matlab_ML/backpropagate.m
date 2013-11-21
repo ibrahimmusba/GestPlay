@@ -1,11 +1,12 @@
-function [Wgrad bgrad] = backpropagate(W, b, ip, op, n_l, a, z)
+function [Wgrad bgrad] = backpropagate(W, b, ip, op, n_l, a, z, lambda)
 
-lambda = 0.0001;
 
 %Compute all delta
 %delta = d(error)/d(z)
 m = size(ip,2);
     
+delta = cell(1,n_l); % Range from 2:n_l
+
 % TODO: Not generalized for multiple outputs
 delta{n_l} = -1*(op - a{n_l}).*a{n_l}.*(1-a{n_l});
 for l = n_l-1:-1:2
