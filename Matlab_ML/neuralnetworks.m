@@ -50,23 +50,27 @@ plot(X_train(2,203:end),X_train(1,203:end),'*r');
 
 [d m] = size(X_train);
 
+%Normalize the data
+X_train = X_train./4 + 0.5;
+X_test = X_test./4 + 0.5;
+
 ip = X_train;
 op = Y_train;
+
 
 %%
 %Define the neural network
 n_ip = d;                       %Number of input features
 n_op = 1;                       %Number of op layers
-n_l = 5;                        %Number of layers including ip and op layer
-n_nodes = [n_ip 5 5 5 n_op];    %Number of nodes per layer
+n_l = 3;                        %Number of layers including ip and op layer
+n_nodes = [n_ip 30 n_op];       %Number of nodes per layer
 
-alpha = 0.1;            %Learning rate (or) gradient descent step size
+alpha = 1.0;            %Learning rate (or) gradient descent step size
 lambda = 0.0;           %Regularization constant
 
-NN{1} = n_ip;
-NN{2} = n_op;
-NN{3} = n_l;
-NN{4} = n_nodes;
+% Sigmoid and its differencial
+sig = @(k) (1./(1+exp(-k)));
+d_sig = @(k) (sig(k).*(1-sig(k)));
 
 %% Initialise the neural network
 
@@ -77,11 +81,6 @@ for i = 1:n_l-1
     W{i} = (rand(n_nodes(i+1),n_nodes(i)) - 0.5 ) / 50;    %small random value 
     b{i} = (zeros(n_nodes(i+1),1) - 0.5 ) / 50;
 end
-
-% Sigmoid and its differencial
-sig = @(k) (1./(1+exp(-k)));
-d_sig = @(k) (sig(k).*(1-sig(k)));
-
 
 gamma = cell(1,n_l); % Range from 2:n_l
  
@@ -99,54 +98,58 @@ while(1) %Loop till convergence
         d_b{l} = zeros(size(b{l}));
     end
     
-    % Do a forward pass for each data points and backpropogate to find
-    % gradients
-    for i = 1:m
-        [a, z] = forward_pass(W,b,ip(:,i),NN);
-        [d_W_tmp d_b_tmp] = backpropagate(W, b, ip(:,i), op(i), NN, a, z, sig, d_sig);
-        [d_W_num d_b_num] = numerical_gradients(W, b, ip(:,i), op(i), NN, a, z, sig, d_sig);
-        
-        for l = 1:n_l-1
-            %Gradient checking
-            if(norm(d_W_tmp{l} - d_W_num{l}) > 0.00000001)
-                sprintf('Gradient Not same')
-            end
-            if(norm(d_b_tmp{l} - d_b_num{l}) > 0.000001)
-                sprintf('Gradient b Not same')
-            end
-            d_W{l} = d_W{l} + d_W_tmp{l};
-            d_b{l} = d_b{l} + d_b_tmp{l};
-        end
-    end
+    [cost Wgrad bgrad] = evaluateNeuralNetwork(W, b, ip, op, n_l);
     
-    %Vectorized Implementation of above code
-    [a, z] = forward_pass(W,b,ip,NN);
     
     %Update the wieghts 
     for l = 1:n_l-1
-        W{l} = W{l} - alpha*(d_W{l}./m + lambda*W{l});
-        b{l} = b{l} - alpha*(d_b{l}./m);
+        W{l} = W{l} - alpha*(Wgrad{l}); % + lambda*W{l}
+        b{l} = b{l} - alpha*(bgrad{l});
     end
     
     %Check the training error in each step and see if it decreases 
     Y_predict = zeros(1,length(Y_test));
     for i = 1:length(Y_test)
-        [a1, z1] = forward_pass(W,b,X_test(:,i),NN);
+        [a1, z1] = doForwardPass(W,b,X_test(:,i),n_l);
         Y_predict(i) = ((sign(a1{n_l} - 0.5)/2)) + 0.5;
     end
     training_error = sum(Y_test ~= Y_predict)/length(Y_test)*100
 
     %Need to implement stopping criterion
-    if(iter == 200)
+    if(iter == 400)
         break;
     end
 end
+
+%% Gradient Descent
+%  Randomly initialize the parameters
+theta = initializeParameters(hiddenSize, visibleSize);
+
+
+%  Use minFunc to minimize the function
+addpath minFunc/
+options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
+                          % function. Generally, for minFunc to work, you
+                          % need a function pointer with two outputs: the
+                          % function value and the gradient. In our problem,
+                          % sparseAutoencoderCost.m satisfies this.
+options.maxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
+options.display = 'on';
+
+
+[opttheta, cost] = minFunc( @(p) sparseAutoencoderCost(p, ...
+                                   visibleSize, hiddenSize, ...
+                                   lambda, sparsityParam, ...
+                                   beta, patches), ...
+                              theta, options);
+
+%%======================================================================
 
 %%
 
 Y_predict = zeros(1,length(Y_test));
 for i = 1:404
-    [a, z] = forward_pass(W,b,X_test(:,i),NN);
+    [a, z] = doForwardPass(W,b,X_test(:,i),n_l);
     Y_predict(i) = sign(a{n_l});
 end
 

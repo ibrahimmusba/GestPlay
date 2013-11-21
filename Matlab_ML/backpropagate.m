@@ -1,25 +1,24 @@
-function [d_W d_b] = backpropagate(W, b, ip, op, NN, a, z, sig, d_sig)
+function [Wgrad bgrad] = backpropagate(W, b, ip, op, n_l, a, z)
 
-%n_ip = NN{1};                  
-%n_op = NN{2};                  
-n_l = NN{3};              
-%n_nodes = NN{4};
+lambda = 0.0001;
 
-%Compute all gamma
-%gamma = d(error)/d(z)
-
+%Compute all delta
+%delta = d(error)/d(z)
+m = size(ip,2);
+    
 % TODO: Not generalized for multiple outputs
-gamma{n_l} = -1*(op - a{n_l}).*a{n_l}.*(1-a{n_l});
+delta{n_l} = -1*(op - a{n_l}).*a{n_l}.*(1-a{n_l});
 for l = n_l-1:-1:2
-    %gamma{l} = d_sig(z{l}).*(W{l}'*gamma{l+1});
-    gamma{l} = a{l}.*(1-a{l}).*(W{l}'*gamma{l+1});
+    %delta{l} = d_sig(z{l}).*(W{l}'*delta{l+1});
+    delta{l} = a{l}.*(1-a{l}).*(W{l}'*delta{l+1});
+    %beta.*((-rho./rho_hat)+((1-rho)./(1-rho_hat)))*ones(1,m)
 end
 
 
 %Compute partial derivatives
 for l = 1:n_l-1
-    d_W{l} = gamma{l+1}*a{l}';
-    d_b{l} = gamma{l+1};
+    Wgrad{l} = ((1./m)*delta{l+1}*a{l}') + lambda*W{l};
+    bgrad{l} = 1./m*sum(delta{l+1},2); 
 end
 
 
