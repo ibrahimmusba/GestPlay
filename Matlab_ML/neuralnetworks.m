@@ -5,6 +5,7 @@
 load mnist_49_3000
 [d,n] = size(x);
 
+y = (y+1)./2;
 m = 2000;
 X_train = x(:,1:2000);
 Y_train = y(1:2000);
@@ -62,11 +63,11 @@ op = Y_train;
 %Define the neural network
 n_ip = d;                       %Number of input features
 n_op = 1;                       %Number of op layers
-n_l = 3;                        %Number of layers including ip and op layer
-n_nodes = [n_ip 30 n_op];       %Number of nodes per layer
+n_l = 4;                        %Number of layers including ip and op layer
+n_nodes = [n_ip 100 100 n_op];       %Number of nodes per layer
 
-alpha = 1.0;            %Learning rate (or) gradient descent step size
-lambda = 0.0;           %Regularization constant
+alpha = 10.0;            %Learning rate (or) gradient descent step size
+lambda = 0.0001;           %Regularization constant
 
 % Sigmoid and its differencial
 sig = @(k) (1./(1+exp(-k)));
@@ -78,29 +79,38 @@ d_sig = @(k) (sig(k).*(1-sig(k)));
 W = cell(1,n_l-1);
 b = cell(1,n_l-1);
 for i = 1:n_l-1
-    W{i} = (rand(n_nodes(i+1),n_nodes(i)) - 0.5 ) / 50;    %small random value 
-    b{i} = (zeros(n_nodes(i+1),1) - 0.5 ) / 50;
+    W{i} = (rand(n_nodes(i+1),n_nodes(i)) - 0.5 ) / 90;    %small random value 
+    b{i} = zeros(n_nodes(i+1),1);
 end
 
-gamma = cell(1,n_l); % Range from 2:n_l
- 
 
+ 
+%% This does not work
 
 iter = 0;
 while(1) %Loop till convergence
     %Gradient Descent
     iter = iter+1;
     %Initialise tmp gradients
-    d_W = cell(1,n_l-1);
-    d_b = cell(1,n_l-1);
+    Wgrad = cell(1,n_l-1);
+    bgrad = cell(1,n_l-1);
     for l = 1:n_l-1
-        d_W{l} = zeros(size(W{l}));
-        d_b{l} = zeros(size(b{l}));
+        Wgrad{l} = zeros(size(W{l}));
+        bgrad{l} = zeros(size(b{l}));
     end
     
-    [cost Wgrad bgrad] = evaluateNeuralNetwork(W, b, ip, op, n_l);
+    theta = convertWbToTheta(W,b);
     
-    
+    [cost grad] = evaluateNeuralNetwork(theta, ip, op, n_l, ...
+                                                n_nodes, lambda);
+    [Wgrad bgrad] = convertThetaToWb(grad, n_nodes);
+    %Code to check gradients
+%     numgrad = computeNumericalGradients(@(x) evaluateNeuralNetwork(x, ip, op, n_l, n_nodes, lambda), theta);
+%     grad = convertWbToTheta(Wgrad,bgrad);
+%     
+%     disp([numgrad  grad]);
+%     disp(norm(numgrad-grad));
+
     %Update the wieghts 
     for l = 1:n_l-1
         W{l} = W{l} - alpha*(Wgrad{l}); % + lambda*W{l}
@@ -109,11 +119,9 @@ while(1) %Loop till convergence
     
     %Check the training error in each step and see if it decreases 
     Y_predict = zeros(1,length(Y_test));
-    for i = 1:length(Y_test)
-        [a1, z1] = doForwardPass(W,b,X_test(:,i),n_l);
-        Y_predict(i) = ((sign(a1{n_l} - 0.5)/2)) + 0.5;
-    end
-    training_error = sum(Y_test ~= Y_predict)/length(Y_test)*100
+    [a1, z1] = doForwardPass(W,b,X_test,n_l);
+    Y_predict = (a1{n_l}>0.5);
+    test_error = sum(Y_test ~= Y_predict)/length(Y_test)*100
 
     %Need to implement stopping criterion
     if(iter == 400)
@@ -123,7 +131,7 @@ end
 
 %% Gradient Descent
 %  Randomly initialize the parameters
-theta = initializeParameters(hiddenSize, visibleSize);
+theta = convertWbToTheta(W,b);
 
 
 %  Use minFunc to minimize the function
@@ -136,22 +144,27 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
 options.maxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
 options.display = 'on';
 
+% 
+% [opttheta, cost] = minFunc( @(p) sparseAutoencoderCost(p, ...
+%                                    visibleSize, hiddenSize, ...
+%                                    lambda, sparsityParam, ...
+%                                    beta, patches), ...
+%                               theta, options);
 
-[opttheta, cost] = minFunc( @(p) sparseAutoencoderCost(p, ...
-                                   visibleSize, hiddenSize, ...
-                                   lambda, sparsityParam, ...
-                                   beta, patches), ...
-                              theta, options);
-
+[opttheta, cost] = minFunc( @(p) evaluateNeuralNetwork(p, ip, op, ...
+                                            n_l, n_nodes, lambda), ...
+                              theta, options)
+                          
 %%======================================================================
 
 %%
+[W_new b_new] = convertThetaToWb(opttheta, n_nodes);
 
 Y_predict = zeros(1,length(Y_test));
-for i = 1:404
-    [a, z] = doForwardPass(W,b,X_test(:,i),n_l);
-    Y_predict(i) = sign(a{n_l});
-end
 
-training_error = sum(Y_test ~= Y_predict)/404*100
+[a1, z1] = doForwardPass(W_new,b_new,X_test,n_l);
+Y_predict = (a1{n_l}>0.5);
+
+
+test_error = sum(Y_test ~= Y_predict)/length(Y_test)*100
 
