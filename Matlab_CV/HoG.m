@@ -66,7 +66,7 @@ end
 %%
 % Step4: Block Normalization
 
-blockHistogram = zeros(numRowCells-1, numColCells-1, numBins*3);
+blockHistogram = zeros(numRowCells-1, numColCells-1, numBins*4);
 
 for i = 1:numRowCells-1
     for j = 1:numColCells-1
