@@ -1,9 +1,9 @@
-function svm(X_train, Y_train, X_test, Y_test)
+function [Y_predict] = svm(X_train, Y_train, X_test, Y_test)
 %I/P 
 % load mnist_49_3000
 
 %Parameters
-p = 1;
+p = 2;
 
 [d,n] = size(X_train);
 
@@ -36,7 +36,7 @@ Y_test_ho = Y_train(n_ho+1:end);
 A = X_train_ho;
 K = (A'*A + 1).^p;
 
-C_ho = logspace(log10(0.01),log10(5000),15);
+C_ho = logspace(log10(0.1),log10(1000),15);
 for i = 1:length(C_ho)
     i
     [alpha_ho(i,:), b_ho(i)] = smo(K, Y_train_ho, C_ho(i), 0.001);
@@ -70,14 +70,14 @@ K_train = (A'*A + 1).^p;
 [alpha, b] = smo(K_train, Y_train, C, 0.0001);
 
 K_test = (X_train' * X_test + 1).^p;
-Y_ans = sign( (alpha.*Y_train) *K_test + b );
+Y_predict = sign( (alpha.*Y_train) *K_test + b );
 %num_support_vec = sum(abs((alpha.*Y_train) *K_test + b) <= 1)
 sum(alpha > 0);%Num support vectors
 
 sprintf('Number of training samples = %d %', length(Y_train))
 sprintf('Number of test samples = %d %', length(Y_test))
 
-test_error = sum(Y_test ~= Y_ans)/length(Y_ans) *100;
+test_error = sum(Y_test ~= Y_predict)/length(Y_predict) *100;
 sprintf('Test Error = %f %', test_error)
 
 training_error = sum(sign( (alpha.*Y_train) *K_train + b ) ~= Y_train) / length(Y_train);

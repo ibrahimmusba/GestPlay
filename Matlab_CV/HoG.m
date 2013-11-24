@@ -1,4 +1,4 @@
-function H = HoG(I)
+function [H, blockHistogram] = HoG(I)
 %Input Image
 
 shouldPlot = false;
@@ -65,17 +65,22 @@ end
 
 %%
 % Step4: Block Normalization
+
+blockHistogram = zeros(numRowCells-1, numColCells-1, numBins*3);
+
 for i = 1:numRowCells-1
     for j = 1:numColCells-1
-        blockHistogram = cellHistogram(i:i+1, j:j+1, :);
-        mag = norm(blockHistogram(:));
+        blockHistogramSingle = cellHistogram(i:i+1, j:j+1, :);
+        mag = norm(blockHistogramSingle(:));
         
         if (mag~=0)
-            blockHistogram = blockHistogram./mag;
+            blockHistogramSingle = blockHistogramSingle./mag;
         end
         
-        %Order doesnt matter as long as it is consistent 
-        H = [H; blockHistogram(:)]; %Column Vector
+        blockHistogram(i,j,:) = blockHistogramSingle(:);
+        
+        %This is the histogram feature vector 
+        H = [H; blockHistogramSingle(:)]; %Column Vector
     end
 end
 
