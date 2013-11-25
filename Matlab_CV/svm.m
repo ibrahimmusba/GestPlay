@@ -1,9 +1,10 @@
-function [Y_predict] = svm(X_train, Y_train, X_test, Y_test)
+function [Y_predict, classifySVM, kernel, w_ret, b_ret, X_support] ...
+                = svm(X_train, Y_train, X_test, Y_test)
 %I/P 
 % load mnist_49_3000
 
-%Parameters
-p = 2;
+%Kernel Function
+kernel = @(A,B) (A'*B + 1).^2; %p = 2;
 
 [d,n] = size(X_train);
 
@@ -34,7 +35,7 @@ Y_test_ho = Y_train(n_ho+1:end);
 %%
 %Kernel Matrix
 A = X_train_ho;
-K = (A'*A + 1).^p;
+K = kernel(A,A); %(A'*A + 1).^p;
 
 C_ho = logspace(log10(0.1),log10(1000),15);
 for i = 1:length(C_ho)
@@ -46,7 +47,7 @@ end
 error_ho = zeros(1,length(C_ho));
 
 for i = 1:length(C_ho)
-    K_ho = (X_train_ho' * X_test_ho + 1).^p;
+    K_ho = kernel(X_train_ho, X_test_ho); %(X_train_ho' * X_test_ho + 1).^p;
     Y_ans_ho = sign( (alpha_ho(i,:).*Y_train_ho) *K_ho + b_ho(i) );
     
     error_ho(i) = sum(Y_test_ho ~= Y_ans_ho)/length(Y_ans_ho);
@@ -65,23 +66,36 @@ C = C_ho(min_ind)
 
 %Kernel Matrix
 A = X_train;
-K_train = (A'*A + 1).^p;
+K_train = kernel(A,A); %(A'*A + 1).^p;
 
 [alpha, b] = smo(K_train, Y_train, C, 0.0001);
 
-K_test = (X_train' * X_test + 1).^p;
+K_test = kernel(X_train, X_test); %(X_train' * X_test + 1).^p;
 Y_predict = sign( (alpha.*Y_train) *K_test + b );
+
+%Return Varaibles
+alpha_ret = alpha(find(alpha~=0));
+X_support = X_train(:,find(alpha ~= 0));
+b_ret = b;
+Y_train_ret = Y_train(find(alpha~=0));
+w_ret = alpha_ret.*Y_train_ret;
+classifySVM = @(X_test_,w_,b_,X_support_) sign(w_ * kernel(X_support_,X_test_) + b_);
+
+%we need to return kernel, evalSVM, w, b, supportvetors
+
 %num_support_vec = sum(abs((alpha.*Y_train) *K_test + b) <= 1)
 sum(alpha > 0);%Num support vectors
 
-sprintf('Number of training samples = %d %', length(Y_train))
-sprintf('Number of test samples = %d %', length(Y_test))
+fprintf('Number of training samples = %d \n', length(Y_train))
+fprintf('Number of test samples = %d \n\n', length(Y_test))
 
 test_error = sum(Y_test ~= Y_predict)/length(Y_predict) *100;
-sprintf('Test Error = %f %', test_error)
+fprintf('Test Error = %f %\n', test_error)
 
 training_error = sum(sign( (alpha.*Y_train) *K_train + b ) ~= Y_train) / length(Y_train);
-sprintf('Training Error = %f %', training_error)
+fprintf('Training Error = %f %\n', training_error)
+
+
 %%
 %Figure to plot 4x5 image 
 % clear sort ind
