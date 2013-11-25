@@ -19,6 +19,9 @@ for k = 1:length(posImageFiles)
     filename = posImageFiles(k).name;
     img = imread([folder_pos '\' filename]);
     H = [H, HoG(img)];
+    if (size(img,3) == 3)
+        img = rgb2gray(img);
+    end
     X = [X, img(:)];
 end
 Y = [Y, ones(1,length(posImageFiles))];
@@ -29,8 +32,11 @@ for i = 1:length(folder_neg)
     negImageFiles = dir([folder_neg{i} '\' '*.jpg']); 
     for k = 1:length(negImageFiles)
         filename = negImageFiles(k).name;
-        img = imread([folder_neg{i} '\' filename]);
+        img = imread([folder_neg{i} '\' filename]);        
         H = [H, HoG(img)];
+        if (size(img,3) == 3)
+            img = rgb2gray(img);
+        end
         X = [X, img(:)];
     end
     Y = [Y, -1.*ones(1,length(negImageFiles))];

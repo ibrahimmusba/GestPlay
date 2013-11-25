@@ -4,7 +4,7 @@ function [Y_predict, classifySVM, kernel, w_ret, b_ret, X_support] ...
 % load mnist_49_3000
 
 %Kernel Function
-kernel = @(A,B) (A'*B + 1).^2; %p = 2;
+kernel = @(A,B) (A'*B + 1).^1; %p = 2;
 
 [d,n] = size(X_train);
 

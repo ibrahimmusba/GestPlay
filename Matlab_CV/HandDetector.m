@@ -45,3 +45,14 @@ end
 tic
 y = classifySVM(H,w,b,X_support)
 toc
+
+close all;
+
+response = response./max(max(response));
+imshow(response);
+
+figure;
+imshow(img);
+hold on;
+[xx yy] = find(response~=0);
+plot( yy.*8 + 88/2, xx.*8 + 112/2,'*');

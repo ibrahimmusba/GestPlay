@@ -57,7 +57,7 @@ for i = 1:numRowCells
         
         cellHistogram(i,j,:) = computeHistogram(cellMag(:), cellDir(:), numBins);
         
-        if shouldPlot
+        if shouldPlot %&& max(cellHistogram(i,j,:)) > 100
             plotHistogram(cellHistogram(i,j,:), rows(round(end/2)), cols(round(end/2)));
         end
     end
