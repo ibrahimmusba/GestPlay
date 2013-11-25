@@ -79,7 +79,7 @@ X_support = X_train(:,find(alpha ~= 0));
 b_ret = b;
 Y_train_ret = Y_train(find(alpha~=0));
 w_ret = alpha_ret.*Y_train_ret;
-classifySVM = @(X_test_,w_,b_,X_support_) sign(w_ * kernel(X_support_,X_test_) + b_);
+classifySVM = @(X_test_,w_,b_,X_support_) (w_ * kernel(X_support_,X_test_) + b_);
 
 %we need to return kernel, evalSVM, w, b, supportvetors
 
