@@ -4,7 +4,7 @@ img = imread('6.jpg');
 img = imresize(img, 0.5);
 tic
 [H1, blockH] = HoG(img);
-toc
+
 [numRowBlockFull numColBlockFull numFeatures] = size(blockH);
 
 cellSize = 8;
@@ -23,9 +23,9 @@ response = zeros(numRowResponse, numColResponse);
 
 H = [];
 %Slide the window and check the response
-for i = 1:numRowResponse
-    disp(i)
-    for j = 1:numColResponse
+for i = 1:2:numRowResponse
+%     disp(i)
+    for j = 1:2:numColResponse
         rows = i:i + numRowBlocks - 1;
         cols = j:j + numColBlocks - 1;
         Hwindow = [];
@@ -37,11 +37,11 @@ for i = 1:numRowResponse
         end
         
         H = [H, Hwindow];
-        if (classifySVM(Hwindow,w,b,X_support) == 1)
-            response(i,j) = 1;
-        end
+%         if (classifySVM(Hwindow,w,b,X_support) > 0)
+%             response(i,j) = abs(classifySVM(Hwindow,w,b,X_support));
+%         end
     end
 end
-tic
+
 y = classifySVM(H,w,b,X_support)
 toc
