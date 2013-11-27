@@ -24,7 +24,7 @@ scale =8; %to scale the vectors by desired amount
 count =-1;
 waitCount = -1;
 delayCount =2 ; % set after how many count you want to take the snapshot;
-snapShotsGap = 10; % set after how many frames you want to take another snapshot
+snapShotsGap = 7; % set after how many frames you want to take another snapshot
 % open the video
 openVideo; % sets the video parameters and open a video object
 

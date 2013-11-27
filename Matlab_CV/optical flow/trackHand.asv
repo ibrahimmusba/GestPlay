@@ -11,10 +11,10 @@
        V = Vy;
        im = imCur;
             winSiz = 7;
-            winStartI = i-winSiz;
-            winEndI = i+winSiz;
-            winStartJ = j-winSiz;
-            winEndJ = j+winSiz;
+            winStartX = j-winSiz;
+            winEndX = j+winSiz;
+            winStartY = i-winSiz;
+            winEndY = i+winSiz;
 %           if winStartX < 1
 %               winStartX = 1;
 %               winEndX = 2*winSiz+1;
@@ -31,13 +31,19 @@
 %               winEndY = flowRes;
 %              winStartY = flowRes-(2*winSiz+1);
 %           end
-        localVel = zeros(2*winSiz+1);
-        localmax = 0;
-          if (winStartI>=1 && winEndI<=flowRes) && (winStartJ>=1 && winEndJ<=flowRes)
-            localVel = Vel(winStartI:winEndI,winStartJ:winEndJ);
+
+          if (winStartX>=1 && winEndX<=flowRes) && (winStartY>=1 && winEndY<=flowRes)
+            localVel = Vel(winStartX:winEndX,winStartY:endy);
+            localVel(1,1) = 0.7;
             localmax = maxVel;
-            EntireVel = Vel;
           end
+%                f2= figure
+% %           imshow(crop)
+%             imagesc(Vel);colormap gray
+%             rectangle('position',[winStartX,winStartY,2*winSiz+1,2*winSiz+1]);
+%             set(0,'DefaultRectangleEdgeColor','r');
+%           pos = get(f2,'position');
+%           set(f2,'position',[pos(1)+400,pos(2:end)]);
       end
       
       count = count -1; % after count frames as set above, take the snapshot
@@ -68,15 +74,26 @@
           if (startx>=1 && endx<=width) && (starty>=1 && endy<=height)
           crop= imCur(starty:endy,startx:endx );
           f2= figure(2)
-          imagesc(localVel);colormap gray
+%           imshow(crop)
+            imagesc(localVel);colormap gray
           pos = get(f2,'position')
           set(f2,'position',[950,pos(2:end)]);
- 
-          f3= figure(3) 
-          imshow(crop)
-          pos = get(f3,'position')
-          set(f3,'position',[150,pos(2:end)]);
+          
                   
           
           end
+%           f2= figure;
+%             hImage = imagesc(im); colormap(gray);
+%             hold on;
+%             axisInterval = linspace(1,width,flowRes+2);
+%             axisIntervalx = axisInterval(2:end-1) ;
+%             axisInterval = linspace(1,height,flowRes+2);
+%             axisIntervaly = axisInterval(2:end-1) ;
+% 
+%             hQuiver = quiver(axisIntervalx,axisIntervaly, U,V,0 ,'m','MaxHeadSize',5,'Color',[.9 .2 .1]);%, 'LineWidth', 1);
+%             axis image;
+%             pos = get(f2,'position');
+%             set(f2,'position',[pos(1)-400,pos(2:end)]);
+%   
+%           break;
       end
