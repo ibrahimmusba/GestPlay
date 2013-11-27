@@ -11,19 +11,8 @@ supportedVid = camInfo.SupportedFormats
 width = 320; 
 height = 240;
 
-% flow parameter
-flowRes = 30 ; %flow resolution 
-scale =8; %to scale the vectors by desired amount
-
-
 winSiz = 10; % decides how many flow vectors we want to consider to find the centroid
-
-if 2*winSiz+1 >flowRes
-    error 'reduce window size';
-end
-% indY = -winSize:winSiz;
-% indX = -winSize:winSiz;
-
+indY = 
 cropX = 120; % size of the bounding box
 cropY = 150;
 extraMargin = 30; % this parameter defines how much of hand could be outside
@@ -31,6 +20,9 @@ camID = 1 ; % default value is 1
 vidSource = 'camera'; % selects the camera as source
 % vidSource = 'LipVid.avi'; % selects the video file
 
+% flow parameter
+flowRes = 30 ; %flow resolution 
+scale =8; %to scale the vectors by desired amount
 
 count =-1;
 waitCount = -1;

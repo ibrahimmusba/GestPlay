@@ -10,90 +10,101 @@
        U = Vx;
        V = Vy;
        im = imCur;
-            winSiz = 7;
-            winStartX = j-winSiz;
-            winEndX = j+winSiz;
-            winStartY = i-winSiz;
-            winEndY = i+winSiz;
-%           if winStartX < 1
-%               winStartX = 1;
-%               winEndX = 2*winSiz+1;
-%           end
-%           if winEndX > flowRes
-%              winEndX = flowRes;
-%              winStartX = flowRes-(2*winSiz+1);
-%           end
-%           if winStartY < 1
-%             winStartY = 1;
-%             endy = 2*winSiz+1;
-%           end
-%           if winEndY > flowRes
-%               winEndY = flowRes;
-%              winStartY = flowRes-(2*winSiz+1);
-%           end
-
-          if (winStartX>=1 && winEndX<=flowRes) && (winStartY>=1 && winEndY<=flowRes)
-            localVel = Vel(winStartX:winEndX,winStartY:endy);
-            localVel(1,1) = 0.7;
-            localmax = maxVel;
+            
+            winStartI = i-winSiz;
+            winEndI = i+winSiz;
+            winStartJ = j-winSiz;
+            winEndJ = j+winSiz;
+          if winStartI < 1
+              winStartI = 1;
+              winEndI = 2*winSiz+1;
           end
-%                f2= figure
-% %           imshow(crop)
-%             imagesc(Vel);colormap gray
-%             rectangle('position',[winStartX,winStartY,2*winSiz+1,2*winSiz+1]);
-%             set(0,'DefaultRectangleEdgeColor','r');
-%           pos = get(f2,'position');
-%           set(f2,'position',[pos(1)+400,pos(2:end)]);
+          if winEndI > flowRes
+             winEndI = flowRes;
+             winStartI = flowRes-(2*winSiz+1);
+          end
+          if winStartJ < 1
+            winStartJ = 1;
+            endy = 2*winSiz+1;
+          end
+          if winEndJ > flowRes
+              winEndJ = flowRes;
+             winStartJ = flowRes-(2*winSiz+1);
+          end
+%         localVel = zeros(2*winSiz+1);
+%         localmax = 0;
+%           if (winStartI>=1 && winEndI<=flowRes) && (winStartJ>=1 && winEndJ<=flowRes)
+            localVel = Vel(winStartI:winEndI,winStartJ:winEndJ);
+            localmax = maxVel;
+            normConst = sum(sum(localVel));
+%             EntireVel = Vel;
+            
+            % find the centroid 
+             
+            cX = sum(sum(X.*localVel))/normConst;
+            cY = sum(sum(Y.*localVel))/normConst;
+            
+            Xl = floor(cX) ; 
+            Xu = ceil(cX);
+            Yl = floor(cX);
+            Yu = ceil(cY);
+
+
+            
+%           end
       end
       
       count = count -1; % after count frames as set above, take the snapshot
       waitCount = waitCount -1; % wait for 50 frames after a snapshot is taken
       if count==0 && waitCount <=0;
           waitCount = snapShotsGap;
+          
+          % display the localVel
+          f2= figure(2)
+          imagesc(localVel);colormap gray
+          pos = get(f2,'position')
+          set(f2,'position',[950,pos(2:end)]);
+          
+          
+          % prepare to crop the image
           startx = (newX-(cropX/2));
           endx   = (newX+(cropX/2));
           starty = (newY-(cropY/2));
           endy   =  (newY+(cropY/2));
           
-%           if startx < 1
-%               startx = 1;
-%               endx = cropX;
-%           end
-%           if endx > width
-%              endx = width;
-%              startx = width-cropX;
-%           end
-%           if starty < 1
-%             starty = 1;
-%             endy = cropY;
-%           end
-%           if endy > height
-%               endy = height;
-%              starty = height-cropY;
-%           end
-          if (startx>=1 && endx<=width) && (starty>=1 && endy<=height)
-          crop= imCur(starty:endy,startx:endx );
-          f2= figure(2)
-%           imshow(crop)
-            imagesc(localVel);colormap gray
-          pos = get(f2,'position')
-          set(f2,'position',[950,pos(2:end)]);
+          % ensure the indices are within the limit
+          if (startx>=-extraMargin && endx<=width+extraMargin) && (starty>=-extraMargin && endy<=height+extraMargin)
+          if startx < 1
+              startx = 1;
+              endx = cropX;
+          end
+          if endx > width
+             endx = width;
+             startx = width-cropX;
+          end
+          if starty < 1
+            starty = 1;
+            endy = cropY;
+          end
+          if endy > height
+              endy = height;
+             starty = height-cropY;
+          end
           
-                  
+                  % crop the desired portion of the hand
+%           if (startx>=1 && endx<=width) && (starty>=1 && endy<=height)
+%           uncomment the above condition to crop only if the hand is well
+%           within the image
+          crop= imCur(starty:endy,startx:endx );
+
+          f3= figure(3) 
+          imshow(crop)
+          pos = get(f3,'position')
+          set(f3,'position',[150,pos(2:end)]);       
+          
+%           end % end statement for above if condtion
+   
           
           end
-%           f2= figure;
-%             hImage = imagesc(im); colormap(gray);
-%             hold on;
-%             axisInterval = linspace(1,width,flowRes+2);
-%             axisIntervalx = axisInterval(2:end-1) ;
-%             axisInterval = linspace(1,height,flowRes+2);
-%             axisIntervaly = axisInterval(2:end-1) ;
-% 
-%             hQuiver = quiver(axisIntervalx,axisIntervaly, U,V,0 ,'m','MaxHeadSize',5,'Color',[.9 .2 .1]);%, 'LineWidth', 1);
-%             axis image;
-%             pos = get(f2,'position');
-%             set(f2,'position',[pos(1)-400,pos(2:end)]);
-%   
-%           break;
-      end
+
+   end
