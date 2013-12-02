@@ -66,19 +66,23 @@ if count==0 && waitCount <=0;
     waitCount = snapShotsGap;
     
 %     display the localVel
+       if(displayFullVelMap || displayLocalVelMap)
               f2= figure(2)
-%               imagesc(localVel/max(max(localVel)));colormap gray
-imagesc(Vel/max(max(Vel)));colormap gray
+              if (displayLocalVelMap)
+              imagesc(localVel/max(max(localVel)));colormap gray
+              else
+              imagesc(Vel/max(max(Vel)));colormap gray
+              end
               pos = get(f2,'position')
               set(f2,'position',[850,pos(2:end)]);
               hold on;
               plot(Xl, Yl,'r*');
-    
+       end
     % prepare to crop the image
     startx = (newX-(cropX/2));
-    endx   = (newX+(cropX/2));
+    endx   = (newX+(cropX/2)-1);
     starty = (newY-(cropY/2));
-    endy   =  (newY+(cropY/2));
+    endy   =  (newY+(cropY/2)-1);
     
     % ensure the indices are within the limit
     if (startx>=-extraMargin && endx<=width+extraMargin) && (starty>=-extraMargin && endy<=height+extraMargin)
@@ -88,7 +92,7 @@ imagesc(Vel/max(max(Vel)));colormap gray
         end
         if endx > width
             endx = width;
-            startx = width-cropX;
+            startx = width-cropX +1;
         end
         if starty < 1
             starty = 1;
@@ -96,7 +100,7 @@ imagesc(Vel/max(max(Vel)));colormap gray
         end
         if endy > height
             endy = height;
-            starty = height-cropY;
+            starty = height-cropY+1;
         end
         
         % crop the desired portion of the hand
@@ -108,14 +112,20 @@ imagesc(Vel/max(max(Vel)));colormap gray
         colorCrop(:,:,2) = image(starty:endy,startx:endx,2);
         colorCrop(:,:,3) = image(starty:endy,startx:endx,3);
         cropName = cropName+1;
-        imwrite(crop,[folderCropped, '\', num2str(cropName) '.jpg'],'jpg');
-        imwrite(crop,[folderCroppedColor, '\', num2str(cropName) '.jpg'],'jpg');
+        if(isImageWrite)
+            imwrite(crop,[folderCropped, '\', num2str(cropName) '.jpg'],'jpg');
+            imwrite(colorCrop,[folderCroppedColor, '\', num2str(cropName) '.jpg'],'jpg');
+        end
         
-        f3= figure(3)
-        imshow(colorCrop)
-        pos = get(f3,'position')
-        set(f3,'position',[150,pos(2:end)]);
+        if(isCroppedDisplay)
+            f3= figure(3)
+            imshow(colorCrop)
+            pos = get(f3,'position')
+            set(f3,'position',[150,pos(2:end)]);
+        end
         
+        % Run Hand Detector
+        % HandDetector(img,svmStruct);
         %           end % end statement for above if condtion
         
         

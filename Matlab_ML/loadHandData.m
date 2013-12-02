@@ -27,6 +27,7 @@ for i = 1:length(folder_neg)
         img = imread([folder_neg{i} '\' filename]);
         if size(img,3)==3
         img = rgb2gray(img);
+
         end
         X = [X, double(img(:))];
     end
@@ -44,13 +45,13 @@ Y = Y(:,randInd);
 X = X./max(max(X));
 
 %Whiten the data
-%immean = mean(X,2);
-%X_norm = X - immean*ones(1,n_total);
+immean = mean(X,2);
+X_norm = X - immean*ones(1,n_total);
 %X = X - immean*ones(1,n_total);
 
-%cov = 1/n_total * X_norm*X_norm';
+cov = 1/n_total * X_norm*X_norm';
 
-%X_white = cov^(-1/2)*X_norm;
+X = cov^(-1/2)*X_norm;
 
 
 
