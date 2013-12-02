@@ -25,7 +25,9 @@ for i = 1:length(folder_neg)
     for k = 1:length(negImageFiles)
         filename = negImageFiles(k).name;
         img = imread([folder_neg{i} '\' filename]);
+        if size(img,3)==3
         img = rgb2gray(img);
+        end
         X = [X, double(img(:))];
     end
     Y = [Y, zeros(1,length(negImageFiles))];

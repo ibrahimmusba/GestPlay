@@ -4,9 +4,9 @@
 [X_train Y_train X_test Y_test] = loadMNISTData;
 d = size(X_train,1);
 %% Load Raw Hand Data
-folder_pos = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset\Processed\front\croppedResized';
-folder_neg{1} = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset\Processed\left\croppedResized';
-folder_neg{2} = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset\Processed\negative\croppedResized';
+folder_pos = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\Processed\front\croppedResized';
+folder_neg{1} = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\Processed\random\randomPatches';
+folder_neg{2} = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\Processed\negative\croppedResized';
 %folder_neg{3} = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\Apexit\down\croppedResized';
 [X_train Y_train X_test Y_test] = loadHandData(folder_pos, folder_neg);
 
@@ -89,7 +89,7 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
                           % need a function pointer with two outputs: the
                           % function value and the gradient. In our problem,
                           % sparseAutoencoderCost.m satisfies this.
-options.maxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
+options.maxIter = 80;	  % Maximum number of iterations of L-BFGS to run 
 options.display = 'on';
 
 % 

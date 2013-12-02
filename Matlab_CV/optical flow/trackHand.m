@@ -65,13 +65,14 @@ waitCount = waitCount -1; % wait for 50 frames after a snapshot is taken
 if count==0 && waitCount <=0;
     waitCount = snapShotsGap;
     
-    % display the localVel
-    %           f2= figure(2)
-    %           imagesc(localVel);colormap gray
-    %           pos = get(f2,'position')
-    %           set(f2,'position',[950,pos(2:end)]);
-    %           hold on;
-    %           plot(Xl, Yl,'r*');
+%     display the localVel
+              f2= figure(2)
+%               imagesc(localVel/max(max(localVel)));colormap gray
+imagesc(Vel/max(max(Vel)));colormap gray
+              pos = get(f2,'position')
+              set(f2,'position',[850,pos(2:end)]);
+              hold on;
+              plot(Xl, Yl,'r*');
     
     % prepare to crop the image
     startx = (newX-(cropX/2));
@@ -103,11 +104,15 @@ if count==0 && waitCount <=0;
         %           uncomment the above condition to crop only if the hand is well
         %           within the image
         crop= imCur(starty:endy,startx:endx );
+        colorCrop(:,:,1) = image(starty:endy,startx:endx,1);
+        colorCrop(:,:,2) = image(starty:endy,startx:endx,2);
+        colorCrop(:,:,3) = image(starty:endy,startx:endx,3);
         cropName = cropName+1;
         imwrite(crop,[folderCropped, '\', num2str(cropName) '.jpg'],'jpg');
+        imwrite(crop,[folderCroppedColor, '\', num2str(cropName) '.jpg'],'jpg');
         
         f3= figure(3)
-        imshow(crop)
+        imshow(colorCrop)
         pos = get(f3,'position')
         set(f3,'position',[150,pos(2:end)]);
         

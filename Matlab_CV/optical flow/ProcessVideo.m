@@ -17,7 +17,7 @@ scale =8; %to scale the vectors by desired amount
 
 
 velThresh = 6;
-winSiz = 7; % decides how many flow vectors we want to consider to find the centroid
+winSiz = 5; % decides how many flow vectors we want to consider to find the centroid
 
 if 2*winSiz+1 >flowRes
     error 'reduce window size';
@@ -26,7 +26,7 @@ end
 % indX = -winSize:winSiz;
 
 cropX = 120; % size of the bounding box
-cropY = 150;
+cropY = 144;
 extraMargin = 30; % this parameter defines how much of hand could be outside
 camID = 1 ; % default value is 1
 vidSource = 'camera'; % selects the camera as source
@@ -36,13 +36,16 @@ vidSource = 'camera'; % selects the camera as source
 count =-1;
 waitCount = -1;
 delayCount =floor(velThresh/2) ; % set after how many count you want to take the snapshot;
-snapShotsGap = 7; % set after how many frames you want to take another snapshot
+snapShotsGap = 4; % set after how many frames you want to take another snapshot
 % open the video
 openVideo; % sets the video parameters and open a video object
 
 % create a folder to save the cropped image
 folderCropped = 'Cropped';
+folderCroppedColor = 'CroppedColor';
+
 mkdir(folderCropped);
+mkdir(folderCroppedColor);
 croppedFiles = dir([folderCropped, '\','*.jpg']);
 cropName = length(croppedFiles);
 % the first frame! 
