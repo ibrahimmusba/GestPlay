@@ -2,8 +2,15 @@
 clear all
 close all
 
-%% set camera parameters
+%% set parameters to display/write the cropped image
+isCroppedDisplay = 1 ;  % set to 0 if dont want to display
+isImageWrite = 0 ;      % set to 0 if dont want to write
 
+displayFullVelMap = 0;  % set to 0 if dont want to display full vel map
+displayLocalVelMap= 0;  % set to 0 if dont want to display local vel map
+% when both local and full vel map is enabled, it displays only local vel
+
+%% set camera parameters
 camInfo = imaqhwinfo('winvideo',1);
 supportedVid = camInfo.SupportedFormats
 % chose the width and height based on above information. Don't keep it in
@@ -17,7 +24,7 @@ scale =8; %to scale the vectors by desired amount
 
 
 velThresh = 6;
-winSiz = 7; % decides how many flow vectors we want to consider to find the centroid
+winSiz = 5; % decides how many flow vectors we want to consider to find the centroid
 
 if 2*winSiz+1 >flowRes
     error 'reduce window size';
@@ -25,21 +32,35 @@ end
 % indY = -winSize:winSiz;
 % indX = -winSize:winSiz;
 
+%% set the cropped image size
 cropX = 120; % size of the bounding box
-cropY = 150;
+cropY = 144;
+% cropX = 88; % size of the bounding box
+% cropY = 112;
+
+
 extraMargin = 30; % this parameter defines how much of hand could be outside
 camID = 1 ; % default value is 1
 vidSource = 'camera'; % selects the camera as source
 % vidSource = 'LipVid.avi'; % selects the video file
 
-
+%% set paramters for frame lag 
 count =-1;
 waitCount = -1;
 delayCount =floor(velThresh/2) ; % set after how many count you want to take the snapshot;
-snapShotsGap = 7; % set after how many frames you want to take another snapshot
+snapShotsGap = 4; % set after how many frames you want to take another snapshot
 % open the video
 openVideo; % sets the video parameters and open a video object
 
+% create a folder to save the cropped image
+path = '';
+folderCropped = [path 'Cropped'];
+folderCroppedColor = [path 'CroppedColor'];
+
+mkdir(folderCropped);
+mkdir(folderCroppedColor);
+croppedFiles = dir([folderCropped, '\','*.jpg']);
+cropName = length(croppedFiles);
 % the first frame! 
 frameNum=1; % time index for frames
 image = fetchFrame(vid, frameNum, vidSource);
@@ -59,6 +80,9 @@ handleQuiver = quiver(axisIntervalx,axisIntervaly, zeros(flowRes),  zeros(flowRe
 axis image;
 fig = gcf; 
 % r= rectangle('position',[0 0 width, height]);
+
+dataset_folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
+load([dataset_folder '\LearnedData\SVMstruct_p2.mat']);
 % process rest of the video
 while(1) 
     frameNum = frameNum+1; % jump to the next frame
