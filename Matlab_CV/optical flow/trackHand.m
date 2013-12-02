@@ -103,6 +103,8 @@ if count==0 && waitCount <=0;
         %           uncomment the above condition to crop only if the hand is well
         %           within the image
         crop= imCur(starty:endy,startx:endx );
+        cropName = cropName+1;
+        imwrite(crop,[folderCropped, '\', num2str(cropName) '.jpg'],'jpg');
         
         f3= figure(3)
         imshow(crop)

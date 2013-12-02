@@ -43,8 +43,7 @@ openVideo; % sets the video parameters and open a video object
 % create a folder to save the cropped image
 folderCropped = 'Cropped';
 mkdir(folderCropped);
-croppedFiles = dir([folderCropped, '\','*.jpg']);
-cropName = length(croppedFiles);
+
 % the first frame! 
 frameNum=1; % time index for frames
 image = fetchFrame(vid, frameNum, vidSource);
