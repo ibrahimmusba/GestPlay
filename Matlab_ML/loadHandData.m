@@ -27,7 +27,6 @@ for i = 1:length(folder_neg)
         img = imread([folder_neg{i} '\' filename]);
         if size(img,3)==3
         img = rgb2gray(img);
-
         end
         X = [X, double(img(:))];
     end
