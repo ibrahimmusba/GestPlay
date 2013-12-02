@@ -2,7 +2,7 @@
       Vel = Vx.^2 + Vy.^2;
       
       maxVel = max(max(Vel));
-      if(maxVel>4) % velocity threshold 
+      if(maxVel>velThresh) % velocity threshold 
             [i, j] = ind2sub(size(Vel),find(Vel == maxVel)); 
 %             newX = round(axisIntervalx(j) + Vx(i,j));
 %             newY = round(axisIntervaly(i) + Vy(i,j));
