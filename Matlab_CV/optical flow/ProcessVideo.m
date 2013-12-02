@@ -16,7 +16,8 @@ flowRes = 30 ; %flow resolution
 scale =8; %to scale the vectors by desired amount
 
 
-winSiz = 10; % decides how many flow vectors we want to consider to find the centroid
+velThresh = 6;
+winSiz = 7; % decides how many flow vectors we want to consider to find the centroid
 
 if 2*winSiz+1 >flowRes
     error 'reduce window size';
@@ -34,7 +35,7 @@ vidSource = 'camera'; % selects the camera as source
 
 count =-1;
 waitCount = -1;
-delayCount =2 ; % set after how many count you want to take the snapshot;
+delayCount =floor(velThresh/2) ; % set after how many count you want to take the snapshot;
 snapShotsGap = 7; % set after how many frames you want to take another snapshot
 % open the video
 openVideo; % sets the video parameters and open a video object

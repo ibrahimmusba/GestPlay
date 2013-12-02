@@ -1,61 +1,60 @@
+      Vel = Vx.^2 + Vy.^2;
+      
+      maxVel = max(max(Vel));
+      if(maxVel>velThresh) % velocity threshold 
+            [i, j] = ind2sub(size(Vel),find(Vel == maxVel)); 
+%             newX = round(axisIntervalx(j) + Vx(i,j));
+%             newY = round(axisIntervaly(i) + Vy(i,j));
+            count =delayCount; % set after how many frames you want to take the snapshot;
+       U = Vx;
+       V = Vy;
+       im = imCur;
+            
+            winStartI = i-winSiz;
+            winEndI = i+winSiz;
+            winStartJ = j-winSiz;
+            winEndJ = j+winSiz;
+            
+          if winStartI < 1
+              winStartI = 1;
+              winEndI = 2*winSiz+1;
+          end
+          if winEndI > flowRes
+             winEndI = flowRes;
+             winStartI = flowRes-(2*winSiz);
+          end
+          if winStartJ < 1
+            winStartJ = 1;
+            winEndJ = 2*winSiz+1;
+          end
+          if winEndJ > flowRes
+              winEndJ = flowRes;
+             winStartJ = flowRes-(2*winSiz);
+          end
+%         localVel = zeros(2*winSiz+1);
+%         localmax = 0;
+%           if (winStartI>=1 && winEndI<=flowRes) && (winStartJ>=1 && winEndJ<=flowRes)
+            localVel = Vel(winStartI:winEndI,winStartJ:winEndJ);
+            localmax = maxVel;
+            normConst = sum(sum(localVel));
+%             EntireVel = Vel;
+            
+            % find the centroid 
+             
+            indX = winStartJ:winEndJ;
+            indY = winStartI:winEndI;
+            [X Y]= meshgrid(indX, indY); 
+            
+            cX = sum(sum(X.*localVel))/normConst;
+            cY = sum(sum(Y.*localVel))/normConst;
+            
+            Xl = floor(cX) ; 
+            Xu = ceil(cX);
+            Yl = floor(cY);
+            Yu = ceil(cY);
+            newX = round(((axisIntervalx(Xl) + axisIntervalx(Xu))/2));
+            newY = round(((axisIntervaly(Yl) + axisIntervaly(Yu))/2));
 
-Vel = Vx.^2 + Vy.^2;
-
-maxVel = max(max(Vel));
-if(maxVel>4) % velocity threshold
-    [i, j] = ind2sub(size(Vel),find(Vel == maxVel));
-    %             newX = round(axisIntervalx(j) + Vx(i,j));
-    %             newY = round(axisIntervaly(i) + Vy(i,j));
-    count =delayCount; % set after how many frames you want to take the snapshot;
-    U = Vx;
-    V = Vy;
-    im = imCur;
-    
-    winStartI = i-winSiz;
-    winEndI = i+winSiz;
-    winStartJ = j-winSiz;
-    winEndJ = j+winSiz;
-    
-    if winStartI < 1
-        winStartI = 1;
-        winEndI = 2*winSiz+1;
-    end
-    if winEndI > flowRes
-        winEndI = flowRes;
-        winStartI = flowRes-(2*winSiz);
-    end
-    if winStartJ < 1
-        winStartJ = 1;
-        winEndJ = 2*winSiz+1;
-    end
-    if winEndJ > flowRes
-        winEndJ = flowRes;
-        winStartJ = flowRes-(2*winSiz);
-    end
-    %         localVel = zeros(2*winSiz+1);
-    %         localmax = 0;
-    %           if (winStartI>=1 && winEndI<=flowRes) && (winStartJ>=1 && winEndJ<=flowRes)
-    localVel = Vel(winStartI:winEndI,winStartJ:winEndJ);
-    localmax = maxVel;
-    normConst = sum(sum(localVel));
-    %             EntireVel = Vel;
-    
-    % find the centroid
-    
-    indX = winStartJ:winEndJ;
-    indY = winStartI:winEndI;
-    [X Y]= meshgrid(indX, indY);
-    
-    cX = sum(sum(X.*localVel))/normConst;
-    cY = sum(sum(Y.*localVel))/normConst;
-    
-    Xl = floor(cX) ;
-    Xu = ceil(cX);
-    Yl = floor(cY);
-    Yu = ceil(cY);
-    newX = round(((axisIntervalx(Xl) + axisIntervalx(Xu))/2));
-    newY = round(((axisIntervaly(Yl) + axisIntervaly(Yu))/2));
-    
     
     
     %           end
