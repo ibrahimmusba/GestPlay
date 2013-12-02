@@ -28,7 +28,13 @@ numRowCells  = imHeight / cellSize;
 
 %%
 % Step1: Gamma/Color Normalization
-
+% if(size(I,3)==3)
+%     I(:,:,1) = histeq(I(:,:,1));
+%     I(:,:,2) = histeq(I(:,:,2));
+%     I(:,:,3) = histeq(I(:,:,3));
+% else
+%     I = hist(I);
+% end
 
 %%
 % Step2: Gradient Calculation

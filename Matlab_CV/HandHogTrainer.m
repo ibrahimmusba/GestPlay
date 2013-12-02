@@ -1,10 +1,13 @@
-function [classifySVM, kernel, w, b, X_support] = HandHogTrainer(folder_pos, folder_neg)
+function [classifySVM, kernel, w, b, X_support] = HandHogTrainer(handDataSetFolder)
 
 %folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\croppedResized';  % write the appropriate folder name here
 % croppedHandDimension = [64 48];
 
-
-
+%setup positive and negative folders
+folder_pos = [handDataSetFolder  '\dataset\Processed\front\croppedResized'];
+folder_neg{1} = [handDataSetFolder  '\dataset\Processed\random\randomPatches'];
+folder_neg{2} = [handDataSetFolder  '\dataset\Processed\random\randomPatches2'];
+folder_neg{3} = [handDataSetFolder  '\dataset\Processed\negative\croppedResized'];
 
 H = []; %Feature Vectors
 X = []; %Image Vector
