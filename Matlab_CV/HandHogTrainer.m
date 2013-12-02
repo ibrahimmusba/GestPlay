@@ -1,13 +1,13 @@
-function [classifySVM, kernel, w, b, X_support] = HandHogTrainer(handDataSetFolder)
+function [svmStruct] = HandHogTrainer(handDataSetFolder)
 
 %folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\croppedResized';  % write the appropriate folder name here
 % croppedHandDimension = [64 48];
 
 %setup positive and negative folders
-folder_pos = [handDataSetFolder  '\dataset\Processed\front\croppedResized'];
-folder_neg{1} = [handDataSetFolder  '\dataset\Processed\random\randomPatches'];
-folder_neg{2} = [handDataSetFolder  '\dataset\Processed\random\randomPatches2'];
-folder_neg{3} = [handDataSetFolder  '\dataset\Processed\negative\croppedResized'];
+folder_pos = [handDataSetFolder  '\Processed\front\croppedResized'];
+folder_neg{1} = [handDataSetFolder  '\Processed\random\randomPatches'];
+folder_neg{2} = [handDataSetFolder  '\Processed\random\randomPatches2'];
+folder_neg{3} = [handDataSetFolder  '\Processed\negative\croppedResized'];
 
 H = []; %Feature Vectors
 X = []; %Image Vector
@@ -17,6 +17,7 @@ Y = []; %Output Labels
 n_total = 0;
 
 %Read all positive examples
+fprintf('Reading all Positive Examples and calculating HoG... \n')
 posImageFiles = dir([folder_pos '\' '*.jpg']); 
 for k = 1:length(posImageFiles)
     filename = posImageFiles(k).name;
@@ -31,6 +32,7 @@ Y = [Y, ones(1,length(posImageFiles))];
 n_total = n_total + length(posImageFiles);
 
 %Read all negative examples
+fprintf('Reading all Negative Examples and calculating HoG... \n')
 for i = 1:length(folder_neg)
     negImageFiles = dir([folder_neg{i} '\' '*.jpg']); 
     for k = 1:length(negImageFiles)
@@ -65,7 +67,14 @@ Y_test = Y(n_train+1:end);
 X_test = X(:, n_train+1:end);
 
 %% Train a SVM on the data
+fprintf('Start SVM training... \n')
 [Y_predict_test, classifySVM, kernel, w, b, X_support] = svm(H_train, Y_train, H_test, Y_test);
+
+svmStruct.classifySVM = classifySVM;
+svmStruct.w = w;
+svmStruct.b = b;
+svmStruct.kernel = kernel;
+svmStruct.X_support = X_support;
 
 %% Plot misclassified images
 

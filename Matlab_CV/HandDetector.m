@@ -1,8 +1,9 @@
 %Hand Detector
+function HandDetector(img,svmst)
 
-img = imread('43.jpg');
-img = imresize(img, 0.8);
-tic
+%img = imread('43.jpg');
+%img = imresize(img, 0.8);
+
 [H1, blockH] = HoG(img);
 
 [numRowBlockFull numColBlockFull numFeatures] = size(blockH);
@@ -26,7 +27,7 @@ response = zeros(numRowResponse, numColResponse);
 % hold on;
 imgnum = 1;
 
-destinationfolder ='D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset\Processed\random';
+%destinationfolder ='D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset\Processed\random';
 
 H = [];
 %Slide the window and check the response
@@ -44,13 +45,14 @@ for i = 1:numRowResponse
         end
         
         H = [H, Hwindow];
-         if (classifySVM(Hwindow,w,b,X_support) > 0)
-            response(i,j) = abs(classifySVM(Hwindow,w,b,X_support));
-            r = [(i).*8-7, (i+numRowBlocks).*8];
-            c = [(j).*8-7, (j+numColBlocks).*8];
-            imgtmp = img(r(1):r(2), c(1):c(2), :);
-            imwrite(imgtmp,[destinationfolder '\' num2str(imgnum) '.jpg'],'jpg');
-            imgnum = imgnum+1;
+        svm_val = svmst.classifySVM(Hwindow,svmst.w,svmst.b,svmst.X_support); 
+         if (svm_val > 0)
+            response(i,j) = abs(svm_val);
+            %r = [(i).*8-7, (i+numRowBlocks).*8];
+            %c = [(j).*8-7, (j+numColBlocks).*8];
+            %imgtmp = img(r(1):r(2), c(1):c(2), :);
+            %imwrite(imgtmp,[destinationfolder '\' num2str(imgnum) '.jpg'],'jpg');
+            %imgnum = imgnum+1;
 %             r = rows.*8;
 %             c = cols.*8;
 %             rectCorners = [r(1) r(1) r(1)+r(end) r(1)+r(end) r(1) ;
@@ -60,8 +62,8 @@ for i = 1:numRowResponse
     end
 end
 
-y = classifySVM(H,w,b,X_support)
-toc
+%y = classifySVM(H,w,b,X_support)
+%toc
 
 %close all;
 
@@ -74,8 +76,8 @@ end
 
 
 %plot max response rectangle            
-r = [(indr).*8-7, (indr+numRowBlocks).*8-7];
-c = [(indc).*8-7, (indc+numColBlocks).*8-7];
+r = [(indr).*8-7, (indr+numRowBlocks+1).*8-7];
+c = [(indc).*8-7, (indc+numColBlocks+1).*8-7];
 
 figure;
 imshow(img);
@@ -88,5 +90,7 @@ plot(rectCorners(2,:),rectCorners(1,:));
 [xx yy] = find(response~=0);
 plot( yy.*8 + 88/2 - 7, xx.*8 + 112/2 - 7,'*');
 
-figure;
-imshow(response);
+%figure;
+%imshow(response);
+
+end
