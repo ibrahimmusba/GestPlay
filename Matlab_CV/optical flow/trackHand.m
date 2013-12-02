@@ -125,7 +125,7 @@ if count==0 && waitCount <=0;
         end
         
         % Run Hand Detector
-        % HandDetector(img,svmStruct);
+        HandDetector(crop,svmStruct);
 
         %           end % end statement for above if condtion
         

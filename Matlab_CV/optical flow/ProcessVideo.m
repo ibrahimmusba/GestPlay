@@ -3,12 +3,14 @@ clear all
 close all
 
 %% set parameters to display/write the cropped image
-isCroppedDisplay = 1 ;  % set to 0 if dont want to display
+isCroppedDisplay = 0 ;  % set to 0 if dont want to display
 isImageWrite = 0 ;      % set to 0 if dont want to write
 
 displayFullVelMap = 0;  % set to 0 if dont want to display full vel map
 displayLocalVelMap= 0;  % set to 0 if dont want to display local vel map
 % when both local and full vel map is enabled, it displays only local vel
+%dataset_folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
+dataset_folder = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
 
 %% set camera parameters
 camInfo = imaqhwinfo('winvideo',1);
@@ -34,7 +36,7 @@ end
 
 %% set the cropped image size
 cropX = 120; % size of the bounding box
-cropY = 144;
+cropY = 168;
 % cropX = 88; % size of the bounding box
 % cropY = 112;
 
@@ -81,8 +83,8 @@ axis image;
 fig = gcf; 
 % r= rectangle('position',[0 0 width, height]);
 
-dataset_folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
 load([dataset_folder '\LearnedData\SVMstruct_p2.mat']);
+addpath ../
 % process rest of the video
 while(1) 
     frameNum = frameNum+1; % jump to the next frame

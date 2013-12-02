@@ -70,27 +70,32 @@ end
 [m indr] = max(response);
 [m indc] = max(m);
 indr = indr(indc);
-if m~=0
-    response = response./m;
-end
 
-
-%plot max response rectangle            
-r = [(indr).*8-7, (indr+numRowBlocks+1).*8-7];
-c = [(indc).*8-7, (indc+numColBlocks+1).*8-7];
-
-figure;
+figure(3);
 imshow(img);
 hold on;
-rectCorners = [r(1) r(1) r(end) r(end) r(1) ;
-               c(1) c(end)  c(end) c(1) c(1)];
-plot(rectCorners(2,:),rectCorners(1,:));
 
+if m~=0
+    response = response./m;
+    %plot max response rectangle            
+    r = [(indr).*8-7, (indr+numRowBlocks+1).*8-7];
+    c = [(indc).*8-7, (indc+numColBlocks+1).*8-7];
         
-[xx yy] = find(response~=0);
-plot( yy.*8 + 88/2 - 7, xx.*8 + 112/2 - 7,'*');
+    rectCorners = [r(1) r(1) r(end) r(end) r(1) ;
+                   c(1) c(end)  c(end) c(1) c(1)];
+    plot(rectCorners(2,:),rectCorners(1,:));
 
-%figure;
-%imshow(response);
+
+    [xx yy] = find(response~=0);
+    plot( yy.*8 + 88/2 - 7, xx.*8 + 112/2 - 7,'*');
+end
+
+hold off
+
+
+
+
+% figure;
+% imshow(response);
 
 end
