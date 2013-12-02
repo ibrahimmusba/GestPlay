@@ -66,18 +66,14 @@ if count==0 && waitCount <=0;
     waitCount = snapShotsGap;
     
 %     display the localVel
-       if(displayFullVelMap || displayLocalVelMap)
               f2= figure(2)
-              if (displayLocalVelMap)
-              imagesc(localVel/max(max(localVel)));colormap gray
-              else
-              imagesc(Vel/max(max(Vel)));colormap gray
-              end
+%               imagesc(localVel/max(max(localVel)));colormap gray
+imagesc(Vel/max(max(Vel)));colormap gray
               pos = get(f2,'position')
               set(f2,'position',[850,pos(2:end)]);
               hold on;
               plot(Xl, Yl,'r*');
-       end
+    
     % prepare to crop the image
     startx = (newX-(cropX/2));
     endx   = (newX+(cropX/2)-1);

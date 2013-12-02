@@ -4,11 +4,11 @@ close all
 
 %% set parameters to display/write the cropped image
 isCroppedDisplay = 1 ;  % set to 0 if dont want to display
-isImageWrite = 0 ;      % set to 0 if dont want to write
+isImageWrite = 1 ;      % set to 0 if dont want to write
 
 displayFullVelMap = 0;  % set to 0 if dont want to display full vel map
 displayLocalVelMap= 0;  % set to 0 if dont want to display local vel map
-% when both local and full vel map is enabled, it displays only local vel
+% when both local and full vel map is enabled, it displ
 
 %% set camera parameters
 camInfo = imaqhwinfo('winvideo',1);
@@ -33,10 +33,10 @@ end
 % indX = -winSize:winSiz;
 
 %% set the cropped image size
-cropX = 120; % size of the bounding box
-cropY = 144;
-% cropX = 88; % size of the bounding box
-% cropY = 112;
+% cropX = 120; % size of the bounding box
+% cropY = 144;
+cropX = 88; % size of the bounding box
+cropY = 112;
 
 
 extraMargin = 30; % this parameter defines how much of hand could be outside
