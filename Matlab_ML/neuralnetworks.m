@@ -4,17 +4,26 @@
 [X_train Y_train X_test Y_test] = loadMNISTData;
 d = size(X_train,1);
 %% Load Raw Hand Data
-
+addpath ../Matlab_CV
 %dataset_folder = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset'; %Change this based on your computer
-dataset_folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
-folder_pos = [dataset_folder '\Processed\front\croppedResized'];
-folder_neg{1} = [dataset_folder '\Processed\random\randomPatches'];
-folder_neg{2} = [dataset_folder '\Processed\random\randomPatches2'];
-folder_neg{3} = [dataset_folder '\Processed\negative\croppedResized'];
+handDataSetFolder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
+folder_pos{1} = [handDataSetFolder  '\Processed\front\croppedResized'];
+folder_pos{2} = [handDataSetFolder  '\Processed\front\scaled1'];
+
+
+folder_neg{1} = [handDataSetFolder  '\Processed\random\randomPatches'];
+folder_neg{2} = [handDataSetFolder  '\Processed\random\randomPatches2'];
+folder_neg{3} = [handDataSetFolder  '\Processed\negative\croppedResized'];
+
+folder_neg{4} = [handDataSetFolder  '\Processed\left_front\croppedResized'];
+folder_neg{5} = [handDataSetFolder  '\Processed\right_front\croppedResized'];
+folder_neg{6} = [handDataSetFolder  '\Processed\right_back\croppedResized'];
 
 %folder_neg{3} = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\Apexit\down\croppedResized';
-[X_train Y_train X_test Y_test] = loadHandData(folder_pos, folder_neg);
-
+%[X_train Y_train X_test Y_test] = loadHandData(folder_pos, folder_neg);
+[X_train Y_train X_test Y_test] = loadHandHoGData(folder_pos, folder_neg);
+Y_train = -1.*Y_train;
+Y_test = -1.*Y_test;
 d = size(X_train,1);
 
 %% Define and Initialise the neural network
@@ -40,47 +49,47 @@ end
  
 %% This does not work
 
-iter = 0;
-while(1) %Loop till convergence
-    %Gradient Descent
-    iter = iter+1;
-    %Initialise tmp gradients
-    Wgrad = cell(1,n_l-1);
-    bgrad = cell(1,n_l-1);
-    for l = 1:n_l-1
-        Wgrad{l} = zeros(size(W{l}));
-        bgrad{l} = zeros(size(b{l}));
-    end
-    
-    theta = convertWbToTheta(W,b);
-    
-    [cost grad] = evaluateNeuralNetwork(theta, X_train, Y_train, n_l, ...
-                                                n_nodes, lambda);
-    [Wgrad bgrad] = convertThetaToWb(grad, n_nodes);
-    %Code to check gradients
-%     numgrad = computeNumericalGradients(@(x) evaluateNeuralNetwork(x, ip, op, n_l, n_nodes, lambda), theta);
-%     grad = convertWbToTheta(Wgrad,bgrad);
+% iter = 0;
+% while(1) %Loop till convergence
+%     %Gradient Descent
+%     iter = iter+1;
+%     %Initialise tmp gradients
+%     Wgrad = cell(1,n_l-1);
+%     bgrad = cell(1,n_l-1);
+%     for l = 1:n_l-1
+%         Wgrad{l} = zeros(size(W{l}));
+%         bgrad{l} = zeros(size(b{l}));
+%     end
 %     
-%     disp([numgrad  grad]);
-%     disp(norm(numgrad-grad));
-
-    %Update the wieghts 
-    for l = 1:n_l-1
-        W{l} = W{l} - alpha*(Wgrad{l}); % + lambda*W{l}
-        b{l} = b{l} - alpha*(bgrad{l});
-    end
-    
-    %Check the training error in each step and see if it decreases 
-    Y_predict = zeros(1,length(Y_test));
-    [a1, z1] = doForwardPass(W,b,X_test,n_l);
-    Y_predict = (a1{n_l}>0.5);
-    test_error = sum(Y_test ~= Y_predict)/length(Y_test)*100
-
-    %Need to implement stopping criterion
-    if(iter == 400)
-        break;
-    end
-end
+%     theta = convertWbToTheta(W,b);
+%     
+%     [cost grad] = evaluateNeuralNetwork(theta, X_train, Y_train, n_l, ...
+%                                                 n_nodes, lambda);
+%     [Wgrad bgrad] = convertThetaToWb(grad, n_nodes);
+%     %Code to check gradients
+% %     numgrad = computeNumericalGradients(@(x) evaluateNeuralNetwork(x, ip, op, n_l, n_nodes, lambda), theta);
+% %     grad = convertWbToTheta(Wgrad,bgrad);
+% %     
+% %     disp([numgrad  grad]);
+% %     disp(norm(numgrad-grad));
+% 
+%     %Update the wieghts 
+%     for l = 1:n_l-1
+%         W{l} = W{l} - alpha*(Wgrad{l}); % + lambda*W{l}
+%         b{l} = b{l} - alpha*(bgrad{l});
+%     end
+%     
+%     %Check the training error in each step and see if it decreases 
+%     Y_predict = zeros(1,length(Y_test));
+%     [a1, z1] = doForwardPass(W,b,X_test,n_l);
+%     Y_predict = (a1{n_l}>0.5);
+%     test_error = sum(Y_test ~= Y_predict)/length(Y_test)*100
+% 
+%     %Need to implement stopping criterion
+%     if(iter == 400)
+%         break;
+%     end
+% end
 
 %% Gradient Descent
 %  Randomly initialize the parameters
@@ -94,7 +103,7 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
                           % need a function pointer with two outputs: the
                           % function value and the gradient. In our problem,
                           % sparseAutoencoderCost.m satisfies this.
-options.maxIter = 70;	  % Maximum number of iterations of L-BFGS to run 
+options.maxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
 
 options.display = 'on';
 
@@ -107,7 +116,7 @@ options.display = 'on';
 
 [opttheta, cost] = minFunc( @(p) evaluateNeuralNetwork(p, X_train, Y_train, ...
                                             n_l, n_nodes, lambda), ...
-                              theta, options)
+                              theta, options);
                           
 %%======================================================================
 
