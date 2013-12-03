@@ -3,6 +3,13 @@ clear all
 close all
 
 %% set parameters to display/write the cropped image
+
+isDisplayVideo = 0; % display the video
+isDisplayVelVector = 0; % to display the velocity vectors
+isDisplayHandDection = 0; % to display the hand detection
+
+
+
 isCroppedDisplay = 0 ;  % set to 0 if dont want to display
 isImageWrite = 0 ;      % set to 0 if dont want to write
 
@@ -10,7 +17,11 @@ displayFullVelMap = 0;  % set to 0 if dont want to display full vel map
 displayLocalVelMap= 0;  % set to 0 if dont want to display local vel map
 % when both local and full vel map is enabled, it displays only local vel
 %dataset_folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
-D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset
+dataset_folder = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset';
+
+load([dataset_folder '\LearnedData\SVM_front_p2.mat']);
+addpath ../
+addpath soundGui
 
 %% set camera parameters
 camInfo = imaqhwinfo('winvideo',1);
@@ -36,7 +47,7 @@ end
 
 %% set the cropped image size
 cropX = 120; % size of the bounding box
-cropY = 144;
+cropY = 168;
 % cropX = 88; % size of the bounding box
 % cropY = 112;
 
@@ -45,6 +56,16 @@ extraMargin = 30; % this parameter defines how much of hand could be outside
 camID = 1 ; % default value is 1
 vidSource = 'camera'; % selects the camera as source
 % vidSource = 'LipVid.avi'; % selects the video file
+
+%% music player setting
+songPath = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\songs\';
+
+songName = [songPath 'kolaveri.mp3'];
+[y,Fs,NBITS,OPTS] = readMp3(songName,[400000,5000000]);
+player = audioplayer(y, Fs);
+action = 'play';
+play(player);
+pause(player);
 
 %% set paramters for frame lag 
 count =-1;
@@ -70,21 +91,23 @@ imCur = rgb2gray(image);
 [Ix Iy It] = findDerivatives(imCur,frameNum);
 
 % display the frame
-figure('NumberTitle','off');
-handleImage = imagesc(imCur); colormap(gray);
-hold on;
-axisInterval = linspace(1,width,flowRes+2);
-axisIntervalx = axisInterval(2:end-1) ;
-axisInterval = linspace(1,height,flowRes+2);
-axisIntervaly = axisInterval(2:end-1) ;
-
-handleQuiver = quiver(axisIntervalx,axisIntervaly, zeros(flowRes),  zeros(flowRes),0 ,'m','MaxHeadSize',5,'Color',[.9 .2 .1]);%, 'LineWidth', 1);
-axis image;
-fig = gcf; 
+if(isDisplayVideo)
+    figure('NumberTitle','off');
+    handleImage = imagesc(imCur); colormap(gray);
+    hold on;
+    axisInterval = linspace(1,width,flowRes+2);
+    axisIntervalx = axisInterval(2:end-1) ;
+    axisInterval = linspace(1,height,flowRes+2);
+    axisIntervaly = axisInterval(2:end-1) ;
+    if(isDisplayVelVector)
+        handleQuiver = quiver(axisIntervalx,axisIntervaly, zeros(flowRes),  zeros(flowRes),0 ,'m','MaxHeadSize',5,'Color',[.9 .2 .1]);%, 'LineWidth', 1);
+    end
+    axis image;
+    fig = gcf; 
+end
 % r= rectangle('position',[0 0 width, height]);
 
-load([dataset_folder '\LearnedData\SVMstruct_p2.mat']);
-addpath ../
+
 % process rest of the video
 while(1) 
     frameNum = frameNum+1; % jump to the next frame
@@ -95,9 +118,12 @@ while(1)
     [Vx Vy] = findMotion(Ix ,Iy ,It,flowRes);
     
     % display the current frame and vectors
-    if ishandle(fig)
+    9i
+    if (ishandle(fig))
      set(handleImage ,'cdata',image);
-     set(handleQuiver ,'UData', scale*Vx, 'VData', scale*Vy);
+     if(isDisplayVelVector)
+        set(handleQuiver ,'UData', scale*Vx, 'VData', scale*Vy);
+     end
     else
         break;
     end
@@ -112,7 +138,7 @@ while(1)
     
 end
    
-
+pause(player)
 close all
 
 % close the camera and clear the memory 

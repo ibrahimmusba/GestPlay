@@ -1,0 +1,19 @@
+% playMusic
+function action = playMusic( action,player)
+
+
+    switch action
+        case 'play'
+            resume(player);
+            clear action;
+            action = 'pause';
+            pause(1)
+            return;
+        case 'pause'
+            pause(player);
+            clear action;
+            action = 'play'
+            pause(1)
+            return
+    end
+end
