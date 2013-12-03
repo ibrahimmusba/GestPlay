@@ -4,10 +4,17 @@ function [svmStruct] = HandHogTrainer(handDataSetFolder)
 % croppedHandDimension = [64 48];
 
 %setup positive and negative folders
-folder_pos = [handDataSetFolder  '\Processed\front\croppedResized'];
+
+folder_pos{1} = [handDataSetFolder  '\Processed\right_front\croppedResized'];
+folder_pos{2} = [handDataSetFolder  '\Processed\right_back\croppedResized'];
+
 folder_neg{1} = [handDataSetFolder  '\Processed\random\randomPatches'];
 folder_neg{2} = [handDataSetFolder  '\Processed\random\randomPatches2'];
 folder_neg{3} = [handDataSetFolder  '\Processed\negative\croppedResized'];
+
+folder_neg{4} = [handDataSetFolder  '\Processed\left_front\croppedResized'];
+folder_neg{5} = [handDataSetFolder  '\Processed\front\croppedResized'];
+folder_neg{6} = [handDataSetFolder  '\Processed\front\scaled1'];
 
 H = []; %Feature Vectors
 X = []; %Image Vector
@@ -18,18 +25,20 @@ n_total = 0;
 
 %Read all positive examples
 fprintf('Reading all Positive Examples and calculating HoG... \n')
-posImageFiles = dir([folder_pos '\' '*.jpg']); 
-for k = 1:length(posImageFiles)
-    filename = posImageFiles(k).name;
-    img = imread([folder_pos '\' filename]);
-    H = [H, HoG(img)];
-    if (size(img,3) == 3)
-        img = rgb2gray(img);
+for i = 1:length(folder_pos)
+    posImageFiles = dir([folder_pos{i} '\' '*.jpg']); 
+    for k = 1:length(posImageFiles)
+        filename = posImageFiles(k).name;
+        img = imread([folder_pos{i} '\' filename]);
+        H = [H, HoG(img)];
+        if (size(img,3) == 3)
+            img = rgb2gray(img);
+        end
+        X = [X, img(:)];
     end
-    X = [X, img(:)];
+    Y = [Y, ones(1,length(posImageFiles))];
+    n_total = n_total + length(posImageFiles);
 end
-Y = [Y, ones(1,length(posImageFiles))];
-n_total = n_total + length(posImageFiles);
 
 %Read all negative examples
 fprintf('Reading all Negative Examples and calculating HoG... \n')
