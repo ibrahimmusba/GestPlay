@@ -25,7 +25,6 @@ W = 0.1*randn(numVisible, numHidden)';
 
 %% train the model
 [Weights, b  d, h]= trainRBM(data, W, epochs, learning_rate);
-% d is the predicted binary input
 
 %% test the model
 testData= [1 0 1 0 0 0 ; % expected h = [1 0]
@@ -33,4 +32,4 @@ testData= [1 0 1 0 0 0 ; % expected h = [1 0]
     0 0 0 0 1 1 ; % expected h = [0 1]
     1 0 1 1 1 0]; % expected h = [0 1]
 
-[h label] = run_visible( testData,Weights,b,numVisible, numHidden)
+[h label] = run_visible( testData,Weights,numVisible, numHidden)
