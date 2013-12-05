@@ -119,8 +119,9 @@ if count==0 && waitCount <=0;
         colorCrop(:,:,1) = image(starty:endy,startx:endx,1);
         colorCrop(:,:,2) = image(starty:endy,startx:endx,2);
         colorCrop(:,:,3) = image(starty:endy,startx:endx,3);
-        cropName = cropName+1;
+        
         if(isImageWrite)
+            cropName = cropName+1;
             imwrite(crop,[folderCropped, '\', num2str(cropName) '.jpg'],'jpg');
             imwrite(colorCrop,[folderCroppedColor, '\', num2str(cropName) '.jpg'],'jpg');
         end

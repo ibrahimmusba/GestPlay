@@ -29,7 +29,7 @@ addpath soundGui
 
 %% set camera parameters
 camInfo = imaqhwinfo('winvideo',1);
-supportedVid = camInfo.SupportedFormats
+supportedVid = camInfo.SupportedFormats;
 % chose the width and height based on above information. Don't keep it in
 % too high resolution
 width = 320; 
@@ -40,7 +40,7 @@ flowRes = 30 ; %flow resolution
 scale =8; %to scale the vectors by desired amount
 
 
-velThresh = 4;
+velThresh = 3;
 winSiz = 5; % decides how many flow vectors we want to consider to find the centroid
 
 if 2*winSiz+1 >flowRes
@@ -76,21 +76,24 @@ pause(player);
 count =-1;
 waitCount = -1;
 
-delayCount =floor(velThresh/2) ; % set after how many count you want to take the snapshot;
-delayCount =ceil(velThresh/2) ; % set after how many count you want to take the snapshot;
+% delayCount =floor(velThresh/2) ; % set after how many count you want to take the snapshot;
+delayCount =max(ceil(velThresh/2),2) ; % set after how many count you want to take the snapshot;
 snapShotsGap = 4; % set after how many frames you want to take another snapshot
 % open the video
 openVideo; % sets the video parameters and open a video object
 
 % create a folder to save the cropped image
-path = '';
-folderCropped = [path 'Cropped'];
-folderCroppedColor = [path 'CroppedColor'];
+if(isImageWrite)
+    path = '';
+    folderCropped = [path 'Cropped'];
+    folderCroppedColor = [path 'CroppedColor'];
 
-mkdir(folderCropped);
-mkdir(folderCroppedColor);
-croppedFiles = dir([folderCropped, '\','*.jpg']);
-cropName = length(croppedFiles);
+    mkdir(folderCropped);
+    mkdir(folderCroppedColor);
+    croppedFiles = dir([folderCropped, '\','*.jpg']);
+    cropName = length(croppedFiles);
+end
+
 % the first frame! 
 frameNum=1; % time index for frames
 image = fetchFrame(vid, frameNum, vidSource);
