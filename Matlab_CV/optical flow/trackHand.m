@@ -35,6 +35,7 @@ if(maxVel>velThresh) % velocity threshold
     %         localmax = 0;
     %           if (winStartI>=1 && winEndI<=flowRes) && (winStartJ>=1 && winEndJ<=flowRes)
     localVel = Vel(winStartI:winEndI,winStartJ:winEndJ);
+    VEL = Vel; 
     localmax = maxVel;
     normConst = sum(sum(localVel));
     %             EntireVel = Vel;
@@ -64,14 +65,21 @@ count = count -1; % after count frames as set above, take the snapshot
 waitCount = waitCount -1; % wait for 50 frames after a snapshot is taken
 if count==0 && waitCount <=0;
     waitCount = snapShotsGap;
+        
+    % find the size of the image to be cropped
+    FindCropSize;
+    
     
 %     display the localVel
        if(displayFullVelMap || displayLocalVelMap)
               f2= figure(2)
               if (displayLocalVelMap)
-              imagesc(localVel/max(max(localVel)));colormap gray
+%               imagesc(localVel/max(max(localVel)));colormap gray
+            
+              imagesc(dilated);colormap gray
               else
               imagesc(Vel/max(max(Vel)));colormap gray
+              
               end
               pos = get(f2,'position')
               set(f2,'position',[850,pos(2:end)]);
@@ -111,8 +119,9 @@ if count==0 && waitCount <=0;
         colorCrop(:,:,1) = image(starty:endy,startx:endx,1);
         colorCrop(:,:,2) = image(starty:endy,startx:endx,2);
         colorCrop(:,:,3) = image(starty:endy,startx:endx,3);
-        cropName = cropName+1;
+        
         if(isImageWrite)
+            cropName = cropName+1;
             imwrite(crop,[folderCropped, '\', num2str(cropName) '.jpg'],'jpg');
             imwrite(colorCrop,[folderCroppedColor, '\', num2str(cropName) '.jpg'],'jpg');
         end
@@ -125,7 +134,11 @@ if count==0 && waitCount <=0;
         end
         
         % Run Hand Detector
-        HandDetector(crop,svmStruct);
+        retVal = HandDetector(crop,svmStruct,isDisplayHandDection);
+        if (retVal ==1) 
+        action= playMusic(action, player);
+        
+        end
 
         %           end % end statement for above if condtion
         
