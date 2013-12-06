@@ -54,7 +54,7 @@ end
 epochs = 2000;
 learning_rate =0.1;
 in = X_train';
-for i=1:n_l-1
+for i=1:nl-1
  
     [W{i} b{i} d h] = trainRBM(in, W{i}, epochs, learning_rate);
     in = h;
