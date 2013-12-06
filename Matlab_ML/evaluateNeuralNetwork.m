@@ -10,7 +10,8 @@ function [cost grad] = evaluateNeuralNetwork(theta, ip, op, n_l, n_nodes, lambda
 
 grad = convertWbToTheta(Wgrad, bgrad);
 
-cost1 = 1/(2*size(ip,2))*trace((op - a{n_l})'*(op - a{n_l}));
+%cost1 = 1/(2*size(ip,2))*trace((op - a{n_l})'*(op - a{n_l}));
+cost1 = 1/(2*size(ip,2))*sum(sum((op - a{n_l}).^2));
 cost2 = 0;
 for l = 1:n_l-1
     cost2 = cost2 + (lambda/2)*(sum(sum(W{l}.^2)));
