@@ -37,8 +37,9 @@ d = size(X_train,1);
 %% Define and Initialise the neural network
 n_ip = d;                       %Number of input features
 n_op = 1;                       %Number of op layers
-n_l = 4;                        %Number of layers including ip and op layer
-n_nodes = [n_ip 350 300 n_op];       %Number of nodes per layer
+n_nodes = [n_ip 300 300 n_op];  %Number of nodes per layer
+n_l = length(n_nodes);          %Number of layers including ip and op layer
+
 
 alpha = 10.0;            %Learning rate (or) gradient descent step size
 lambda = 0.0002;           %Regularization constant
@@ -65,6 +66,7 @@ for i=1:n_l-1
     [W{i} b{i} d h] = trainRBM(in, W{i}, epochs, learning_rate);
     in = h;
 end
+
 %% Gradient Descent
 %  Randomly initialize the parameters
 theta = convertWbToTheta(W,b);
