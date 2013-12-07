@@ -35,7 +35,7 @@ for i=1:epochs
     % Update weights.
     weights = weights + learning_rate * ((pos_associations - neg_associations) / num_examples);
 
-    error = sum(sum((data - neg_visible_probs).^2));
+    error = sum(sum((data - neg_visible_probs).^2))/(size(data,1)*size(data,2));
     [i error]
 
 end

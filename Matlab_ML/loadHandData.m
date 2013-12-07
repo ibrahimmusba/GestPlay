@@ -9,16 +9,18 @@ Y = []; %Output Labels
 n_total = 0;
 
 %Read all positive examples
-posImageFiles = dir([folder_pos '\' '*.jpg']); 
-for k = 1:length(posImageFiles)
-    filename = posImageFiles(k).name;
-    img = imread([folder_pos '\' filename]);
-    img = rgb2gray(img);
-    X = [X, double(img(:))];
-end
-Y = [Y, ones(1,length(posImageFiles))];
-n_total = n_total + length(posImageFiles);
+for i=1:lenght(folder_pos)
+    posImageFiles = dir([folder_pos{i} '\' '*.jpg']);
 
+    for k = 1:length(posImageFiles)
+        filename = posImageFiles(k).name;
+        img = imread([folder_pos '\' filename]);
+        img = rgb2gray(img);
+        X = [X, double(img(:))];
+    end
+    Y = [Y, ones(1,length(posImageFiles))];
+    n_total = n_total + length(posImageFiles);
+end
 %Read all negative examples
 for i = 1:length(folder_neg)
     negImageFiles = dir([folder_neg{i} '\' '*.jpg']); 
@@ -37,6 +39,7 @@ end
 
 
 %Shuffle training data
+
 randInd = randperm(n_total);
 X = X(:,randInd);
 Y = Y(:,randInd);
