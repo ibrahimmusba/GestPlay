@@ -9,19 +9,25 @@ d = size(X_train,1);
 addpath ../Matlab_CV
 %dataset_folder = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset'; %Change this based on your computer
 handDataSetFolder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
-folder_pos{1} = [handDataSetFolder  '\Processed\front\croppedResized'];
-folder_pos{2} = [handDataSetFolder  '\Processed\front\scaled1'];
 
+% croppedSize = 'Cropped_144_112';
+%croppedSize = 'Cropped_112_88';
+%croppedSize = 'Cropped_88_64';
+croppedSize = 'Cropped_64_48';
 
-folder_neg{1} = [handDataSetFolder  '\Processed\random\randomPatches'];
-folder_neg{2} = [handDataSetFolder  '\Processed\random\randomPatches2'];
-folder_neg{3} = [handDataSetFolder  '\Processed\negative\croppedResized'];
+folder_pos{1} = [handDataSetFolder  '\Processed\front\'   croppedSize];
+folder_pos{2} = [handDataSetFolder  '\Processed\front\'   'Cropped_scaled_64_48'];
 
-folder_neg{4} = [handDataSetFolder  '\Processed\left_front\croppedResized'];
-folder_neg{5} = [handDataSetFolder  '\Processed\right_front\croppedResized'];
-folder_neg{6} = [handDataSetFolder  '\Processed\right_back\croppedResized'];
+%Random Patches
+folder_neg{1} = [handDataSetFolder  '\Processed\random\randomPatches\'  croppedSize];
+folder_neg{2} = [handDataSetFolder  '\Processed\random\randomPatches2\' croppedSize];
+folder_neg{3} = [handDataSetFolder  '\Processed\negative\'              croppedSize];
 
-%folder_neg{3} = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\Apexit\down\croppedResized';
+%Other Hands
+folder_neg{4} = [handDataSetFolder  '\Processed\left_front\' croppedSize];
+folder_neg{5} = [handDataSetFolder  '\Processed\right_front\' croppedSize];
+folder_neg{6} = [handDataSetFolder  '\Processed\right_back\' croppedSize];%folder_neg{3} = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\Apexit\down\croppedResized';
+
 %[X_train Y_train X_test Y_test] = loadHandData(folder_pos, folder_neg);
 [X_train Y_train X_test Y_test] = loadHandHoGData(folder_pos, folder_neg);
 Y_train = -1.*Y_train;
@@ -32,10 +38,10 @@ d = size(X_train,1);
 n_ip = d;                       %Number of input features
 n_op = 1;                       %Number of op layers
 n_l = 4;                        %Number of layers including ip and op layer
-n_nodes = [n_ip 300 300 n_op];       %Number of nodes per layer
+n_nodes = [n_ip 350 300 n_op];       %Number of nodes per layer
 
 alpha = 10.0;            %Learning rate (or) gradient descent step size
-lambda = 0.0001;           %Regularization constant
+lambda = 0.0002;           %Regularization constant
 
 % Sigmoid and its differencial
 sig = @(k) (1./(1+exp(-k)));
@@ -71,7 +77,7 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
                           % need a function pointer with two outputs: the
                           % function value and the gradient. In our problem,
                           % sparseAutoencoderCost.m satisfies this.
-options.maxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
+options.maxIter = 180;	  % Maximum number of iterations of L-BFGS to run 
 
 options.display = 'on';
 
