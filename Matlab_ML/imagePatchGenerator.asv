@@ -9,11 +9,15 @@ function [ patches ] = imagePatchGenerator( handDataSetFolder, numpatches )
 croppedSize = 'Cropped_64_48';
 
 gestureName = 'front';
-wantGray =0 ; % set it 1 if you want gray images 
-[ folder_pos folder_neg ] = getBinaryClassFolderNames( handDataSetFolder, ...
-                                            gestureName, croppedSize )
 
-[X_train Y_train X_test Y_test IMAGES IMAGES_labels] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray);
+% Apexit: I commmented this because I couldnot find the getFolderNames fnc
+% [ folder_pos folder_neg ] = getFolderNames( handDataSetFolder, ...
+%                                             gestureName, croppedSize )
+
+folder_pos{1} = [handDataSetFolder, 'front'];
+folder_neg{1} = 
+
+[X_train Y_train X_test Y_test IMAGES IMAGES_labels] = loadHandDataBinaryClass(folder_pos, folder_neg);
 
 %% Generate Random Patches
 

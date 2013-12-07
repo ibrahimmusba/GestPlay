@@ -4,9 +4,11 @@ function [ folder_pos folder_neg ] = getBinaryClassFolderNames( handDataSetFolde
 %names of positive examples(particular gesuture) and negative examples(all
 %other images)
 
-neg_name{1} = '\random\randomPatches';
+%  neg_name{1} = '\random\randomPatches';
+neg_name{1} = '\randomPatches';
 neg_name{2} = '\random\randomPatches2';
 neg_name{3} = '\negative';
+
 
 switch gestureName
     case 'front'
