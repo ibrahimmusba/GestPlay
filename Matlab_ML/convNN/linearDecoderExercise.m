@@ -1,12 +1,12 @@
 addpath ../utilities
 addpath ../minFunc
 addpath ../matFiles
-handDatasetFolder = '';
+handDatasetFolder = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\matFiles\';
 % handDatasetFolder = '\engin-labs.m.storage.umich.edu\apexit\windat.v2\Desktop\fall-13\545\Project\matFiles\';
 %%  Initialization
 %  Here we initialize some parameters used for the exercise.
 
-imageChannels = 1;     % number of channels (rgb, so 3)
+imageChannels = 3;     % number of channels (rgb, so 3)
 
 patchDim   = 8;          % patch dimension
 numPatches = 100000;   % number of patches
@@ -62,8 +62,11 @@ assert(diff < 1e-9, 'Difference too large. Check your gradient computation again
 
 
 %TODO
-load([handDatasetFolder 'MS4_patches_gray_100k.mat']);
+load([handDatasetFolder 'MS4_patches_color_100k.mat']);
+patches = patches/255;
 
+
+figure
 if (imageChannels ==1 )
     display_network(patches(:,1:100));
 else

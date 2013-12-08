@@ -10,10 +10,23 @@ croppedSize = 'Cropped_64_48';
 
 gestureName = 'front';
 wantGray =0 ; % set it 1 if you want gray images 
+numClasses = 4; % how many classes are there
+
+if (numClasses ==2)
 [ folder_pos folder_neg ] = getBinaryClassFolderNames( handDataSetFolder, ...
-                                            gestureName, croppedSize )
+                                            gestureName, croppedSize );
 
 [X_train Y_train X_test Y_test IMAGES IMAGES_labels] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray);
+
+elseif(numClasses==4)
+[ folder_front, folder_right, folder_left, folder_neg ] = getAllClassFolderNames( handDataSetFolder, ...
+                                            croppedSize );
+[X_train Y_train X_test Y_test IMAGES IMAGES_labels] = loadHandDataAllClass(folder_front, folder_right,...
+                                            folder_left, folder_neg,wantGray);
+else 
+    error('check numClasses');
+end
+
 
 %% Generate Random Patches
 

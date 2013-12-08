@@ -1,4 +1,4 @@
-function [X_train Y_train X_test Y_test IMG IMG_labels] = loadHandDataAllClass(folder_front, folder_right, folder_left, folder_neg)
+function [X_train Y_train X_test Y_test IMG IMG_labels] = loadHandDataAllClass(folder_front, folder_right, folder_left, folder_neg,wantGray)
 %folder_pos and folder_neg are folder names which contain all the image
 %files. The images should all be of the same dimension. folder_neg can be
 %an array of folder names having negative images
@@ -17,7 +17,7 @@ for i = 1:length(folder_front)
     for k = 1:length(frontImageFiles)
         filename = frontImageFiles(k).name;
         img = imread([folder_front{i} '\' filename]);
-        if (size(img,3) == 3)
+        if (size(img,3) == 3 && wantGray)
             img = rgb2gray(img);
         end
         IMG(:,:,:,ind) = img; ind = ind + 1;
@@ -36,7 +36,7 @@ for i = 1:length(folder_neg)
     for k = 1:length(negImageFiles)
         filename = negImageFiles(k).name;
         img = imread([folder_neg{i} '\' filename]);
-        if size(img,3)==3
+        if (size(img,3) == 3 && wantGray)
             img = rgb2gray(img);
         end
         IMG(:,:,:,ind) = img; ind = ind + 1;
@@ -55,7 +55,7 @@ for i = 1:length(folder_right)
     for k = 1:length(rightImageFiles)
         filename = rightImageFiles(k).name;
         img = imread([folder_right{i} '\' filename]);
-        if size(img,3)==3
+        if (size(img,3) == 3 && wantGray)
             img = rgb2gray(img);
         end
         IMG(:,:,:,ind) = img; ind = ind + 1;
@@ -73,7 +73,7 @@ for i = 1:length(folder_left)
     for k = 1:length(leftImageFiles)
         filename = leftImageFiles(k).name;
         img = imread([folder_left{i} '\' filename]);
-        if size(img,3)==3
+        if (size(img,3) == 3 && wantGray)
             img = rgb2gray(img);
         end
         IMG(:,:,:,ind) = img; ind = ind + 1;

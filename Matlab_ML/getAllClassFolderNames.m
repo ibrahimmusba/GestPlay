@@ -4,18 +4,19 @@ function [ folder_front, folder_right, folder_left, folder_neg ] = getAllClassFo
 %names of positive examples(particular gesuture) and negative examples(all
 %other images)
 
-neg_name{1} = '\random\randomPatches';
+% neg_name{1} = '\random\randomPatches';
+neg_name{1} = '\randomPatches';
 neg_name{2} = '\random\randomPatches2';
 neg_name{3} = '\negative';
 
 front_name{1} = '\front';
 front_name{2} = '\front\scaled';
         
-right_name{4} = '\right_front';
-right_name{5} = '\right_back';
+right_name{1} = '\right_front';
+right_name{2} = '\right_back';
 
-left_name{6} = '\left_front';
-left_name{7} = '\left_back';
+left_name{1} = '\left_front';
+left_name{2} = '\left_back';
         
 for i=1:length(front_name)
     folder_front{i} = [handDataSetFolder  '\Processed' front_name{i}  '\' croppedSize]; 

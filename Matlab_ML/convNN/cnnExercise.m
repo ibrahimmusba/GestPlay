@@ -5,7 +5,7 @@ close all
 addpath ../utilities
 addpath ../minFunc
 addpath ../matFiles
-handDatasetFolder = '';
+handDatasetFolder = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\matFiles\';
 % handDatasetFolder = '\engin-labs.m.storage.umich.edu\apexit\windat.v2\Desktop\fall-13\545\Project\matFiles\';
 %%======================================================================
 %% Initialization
