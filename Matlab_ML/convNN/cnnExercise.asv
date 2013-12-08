@@ -76,9 +76,9 @@ if (imageChannels == 1)
 else 
 %     load([handDatasetFolder 'stlTrainSubset.mat']); % loads numTrainImages, trainImages, trainLabels
     if (numClasses == 2)
-           load([handDatasetFolder 'MS4_images_color_64_48_frontlabelled.mat']); % loads binary 
+           load([handDatasetFolder 'MS4_images_gray_64_48_frontlabelled.mat']); % loads binary 
     elseif (numClasses ==4)
-           load([handDatasetFolder 'MS4_images_color_64_48.mat']); % loads multi class 
+           load([handDatasetFolder 'MS4_images_gray_64_48.mat']); % loads multi class 
     else 
         error('check numClasses');
     end
@@ -250,7 +250,7 @@ toc();
 
 
 % Setup parameters for softmax
- load ([handDatasetFolder 'cnnPooledMS4FeaturesColor_B5_L3_AllClasses.mat'])
+ load cnnPooledMS2Features_B5_L1.mat
 softmaxLambda = 1e-4;
 
 % Reshape the pooledFeatures to form an input vector for softmax
@@ -274,7 +274,7 @@ softmaxModel = softmaxTrain(numel(pooledFeaturesTrain) / numTrainImages,...
 
 softmaxX = permute(pooledFeaturesTest, [1 3 4 2]);
 softmaxX = reshape(softmaxX, numel(pooledFeaturesTest) / numTestImages, numTestImages);
-if (numClasses ==2)
+if(imageChannels ==1)
     softmaxY = testLabels+1;
 else
     softmaxY = testLabels;
