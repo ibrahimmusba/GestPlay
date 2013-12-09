@@ -285,4 +285,20 @@ acc = (pred(:) == softmaxY(:));
 acc = sum(acc) / size(acc, 1);
 fprintf('Accuracy: %2.3f%%\n', acc * 100);
 
-% You should expect to get an accuracy of around 80% on the test images.
+%% show missclassified images
+
+misclassified = find(~acc);
+figure;
+hold on;
+for i = 1:length(misclassified)
+    subplot(5,5,i);
+    imshow(reshape(testImages(:,misclassified(i)),[imageHeightm imageWidth,imageChannels]))
+    if testLabels(i) == 1
+        title('Front');
+    else
+        title('Negative');
+    end
+    if i ==25 
+        break;
+    end
+end

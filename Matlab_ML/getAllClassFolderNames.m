@@ -1,5 +1,5 @@
 function [ folder_front, folder_right, folder_left, folder_neg ] = getAllClassFolderNames( handDataSetFolder, ...
-                                            croppedSize )
+                                            croppedSize,isCentered )
 %UNTITLED Given a particular gestureName this function will return folder
 %names of positive examples(particular gesuture) and negative examples(all
 %other images)
@@ -9,14 +9,19 @@ neg_name{1} = '\randomPatches';
 neg_name{2} = '\random\randomPatches2';
 neg_name{3} = '\negative';
 
-front_name{1} = '\front';
-front_name{2} = '\front\scaled';
+if(isCentered)
+    path ='';
+else
+    path ='\uncenteredAp';
+end
+front_name{1} = [path '\front'];
+front_name{2} = [path '\front\scaled'];
         
-right_name{1} = '\right_front';
-right_name{2} = '\right_back';
+right_name{1} = [path '\right_front'];
+right_name{2} = [path '\right_back'];
 
-left_name{1} = '\left_front';
-left_name{2} = '\left_back';
+left_name{1} = [path '\left_front'];
+left_name{2} = [path '\left_back'];
         
 for i=1:length(front_name)
     folder_front{i} = [handDataSetFolder  '\Processed' front_name{i}  '\' croppedSize]; 

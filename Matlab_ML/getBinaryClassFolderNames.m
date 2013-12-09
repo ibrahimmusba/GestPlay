@@ -38,6 +38,14 @@ switch gestureName
         neg_name{6} = '\right_front';
         neg_name{7} = '\right_back';
         
+    case 'uncentered'
+         pos_name{1} = '\uncenteredAp\front';
+        
+        neg_name{4} = '\right_front';
+        neg_name{5} = '\right_back';
+        neg_name{6} = '\left_front';
+        neg_name{7} = '\left_back';
+        
     otherwise
         error('error in getFolderNames: gestureName not defined');
         

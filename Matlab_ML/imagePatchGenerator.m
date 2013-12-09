@@ -7,8 +7,8 @@ function [ patches ] = imagePatchGenerator( handDataSetFolder, numpatches )
 %croppedSize = 'Cropped_112_88';
 %croppedSize = 'Cropped_88_64';
 croppedSize = 'Cropped_64_48';
-
-gestureName = 'front';
+isCentered = 0; % do you want centered or uncentered
+gestureName = 'uncentered';
 wantGray =0 ; % set it 1 if you want gray images 
 numClasses = 4; % how many classes are there
 
@@ -20,7 +20,7 @@ if (numClasses ==2)
 
 elseif(numClasses==4)
 [ folder_front, folder_right, folder_left, folder_neg ] = getAllClassFolderNames( handDataSetFolder, ...
-                                            croppedSize );
+                                            croppedSize,isCentered );
 [X_train Y_train X_test Y_test IMAGES IMAGES_labels] = loadHandDataAllClass(folder_front, folder_right,...
                                             folder_left, folder_neg,wantGray);
 else 

@@ -104,11 +104,14 @@ figure;
 hold on;
 for i = 1:length(misclassified)
     subplot(5,5,i);
-    imshow(reshape(X_test(:,i),size(img)));
-    if Y_test(i) == 1
+    imshow(reshape(X_test(:,misclassified(i)),size(img)));
+    if Y_test(misclassified(i)) == 1
         title('Front');
     else
         title('Negative');
+    end
+    if i ==25 
+        break;
     end
 end
 
