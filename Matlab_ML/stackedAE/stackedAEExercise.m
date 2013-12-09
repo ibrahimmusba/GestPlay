@@ -14,32 +14,71 @@
 %  change the code in this file. 
 %
 addpath ../utilities/
+mnistData = false;
+if(~mnistData)
+    load('C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset\matFiles\patch16x16fromHand_on_Centered_Hand\cnnPooledMS4FeaturesColor16x16_pool16_AllClasses.mat')
+    load('C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset\matFiles\imageSets\MS4_images_color_64_48.mat')
+end
+      
 %%======================================================================
 %% STEP 0: Here we provide the relevant parameters values that will
 %  allow your sparse autoencoder to get good filters; you do not need to 
 %  change the parameters below.
 
-inputSize = 28 * 28;
-numClasses = 10;
-hiddenSizeL1 = 200;    % Layer 1 Hidden Size
-hiddenSizeL2 = 200;    % Layer 2 Hidden Size
-sparsityParam = 0.1;   % desired average activation of the hidden units.
-                       % (This was denoted by the Greek alphabet rho, which looks like a lower-case "p",
-		               %  in the lecture notes). 
-lambda = 3e-3;         % weight decay parameter       
-beta = 3;              % weight of sparsity penalty term       
+if(~mnistData)
+    inputSize = prod(size(pooledFeaturesTrain))/size(pooledFeaturesTrain,2);
+    numClasses = 4;
+    hiddenSizeL1 = 500;    % Layer 1 Hidden Size
+    hiddenSizeL2 = 200;    % Layer 2 Hidden Size
+    sparsityParam = 0.1;   % desired average activation of the hidden units.
+                           % (This was denoted by the Greek alphabet rho, which looks like a lower-case "p",
+    		               %  in the lecture notes). 
+    lambda = 3e-3;         % weight decay parameter       
+    beta = 3;              % weight of sparsity penalty term       
+else
+    inputSize = 28 * 28;
+    numClasses = 10;
+    hiddenSizeL1 = 200;    % Layer 1 Hidden Size
+    hiddenSizeL2 = 200;    % Layer 2 Hidden Size
+    sparsityParam = 0.1;   % desired average activation of the hidden units.
+                           % (This was denoted by the Greek alphabet rho, which looks like a lower-case "p",
+    		               %  in the lecture notes). 
+    lambda = 3e-3;         % weight decay parameter       
+    beta = 3;              % weight of sparsity penalty term       
+end
 
 %%======================================================================
 %% STEP 1: Load data from the MNIST database
 %
 %  This loads our training data from the MNIST database files.
 
-% Load MNIST database files
-addpath ../mnist/
-trainData = loadMNISTImages('train-images.idx3-ubyte');
-trainLabels = loadMNISTLabels('train-labels.idx1-ubyte');
+fprintf('Loading Data');
 
-trainLabels(trainLabels == 0) = 10; % Remap 0 to 10 since our labels need to start from 1
+% Load MNIST database files
+if(mnistData)
+    addpath ../mnist/
+    trainData = loadMNISTImages('train-images.idx3-ubyte');
+    trainLabels = loadMNISTLabels('train-labels.idx1-ubyte');
+
+    trainLabels(trainLabels == 0) = 10; % Remap 0 to 10 since our labels need to start from 1
+else
+    % Load pooled data
+    totalDataSize = length(IMAGES_labels);
+    trainDataSize = size(pooledFeaturesTrain,2);
+    testDataSize = totalDataSize - trainDataSize;
+    
+    trainData = zeros(inputSize,trainDataSize);
+    trainLabels = IMAGES_labels(1:trainDataSize);
+    testData = zeros(inputSize,testDataSize);
+    testLabels = IMAGES_labels(trainDataSize+1:end);
+    for i = 1:trainDataSize
+        trainData(:,i) = reshape(pooledFeaturesTrain(:,i,:,:),inputSize,1);
+    end
+    for i = 1:testDataSize
+        testData(:,i) = reshape(pooledFeaturesTest(:,i,:,:),inputSize,1);
+    end
+    addpath ../Matlab_CV    
+end
 
 %%======================================================================
 %% STEP 2: Train the first sparse autoencoder
@@ -48,6 +87,7 @@ trainLabels(trainLabels == 0) = 10; % Remap 0 to 10 since our labels need to sta
 %  If you've correctly implemented sparseAutoencoderCost.m, you don't need
 %  to change anything here.
 
+fprintf('\nPreTraining First Layer\n');
 
 %  Randomly initialize the parameters
 sae1Theta = initializeParameters(hiddenSizeL1, inputSize);
@@ -86,6 +126,8 @@ options.display = 'on';
 %  If you've correctly implemented sparseAutoencoderCost.m, you don't need
 %  to change anything here.
 
+fprintf('\nPreTraining Second Layer\n');
+
 [sae1Features] = feedForwardAutoencoder(sae1OptTheta, hiddenSizeL1, ...
                                         inputSize, trainData);
 
@@ -113,6 +155,8 @@ sae2Theta = initializeParameters(hiddenSizeL2, hiddenSizeL1);
 %  This trains the sparse autoencoder on the second autoencoder features.
 %  If you've correctly implemented softmaxCost.m, you don't need
 %  to change anything here.
+
+fprintf('\nTraining Softmax Classifier\n');
 
 [sae2Features] = feedForwardAutoencoder(sae2OptTheta, hiddenSizeL2, ...
                                         hiddenSizeL1, sae1Features);
@@ -149,6 +193,8 @@ saeSoftmaxOptTheta = softmaxModel.optTheta(:);
 % Implement the stackedAECost to give the combined cost of the whole model
 % then run this cell.
 
+fprintf('\nFINE TUNING\n');
+
 % Initialize the stack using the parameters learned
 stack = cell(2,1);
 stack{1}.w = reshape(sae1OptTheta(1:hiddenSizeL1*inputSize), ...
@@ -169,7 +215,7 @@ stackedAETheta = [ saeSoftmaxOptTheta ; stackparams ];
 %
 %
         
-%save beforeFineTuning
+% -save beforeFineTuning
 
 %  Use minFunc to minimize the function
 addpath ../minFunc/
@@ -182,7 +228,7 @@ options.maxIter = 400;	  % Maximum number of iterations of L-BFGS to run
 options.display = 'on';
 %options.maxFunEvals = 2500;
 
-lambda = 0.00000;
+lambda = 0.0002;
 [stackedAEOptTheta, cost] = minFunc( @(p) stackedAECost(p, inputSize, hiddenSizeL2, ...
                                               numClasses, netconfig, ...
                                               lambda, trainData, trainLabels), ...
@@ -200,10 +246,12 @@ lambda = 0.00000;
 
 % Get labelled test images
 % Note that we apply the same kind of preprocessing as the training set
-testData = loadMNISTImages('t10k-images.idx3-ubyte');
-testLabels = loadMNISTLabels('t10k-labels.idx1-ubyte');
+if(mnistData)
+    testData = loadMNISTImages('t10k-images.idx3-ubyte');
+    testLabels = loadMNISTLabels('t10k-labels.idx1-ubyte');
 
-testLabels(testLabels == 0) = 10; % Remap 0 to 10
+    testLabels(testLabels == 0) = 10; % Remap 0 to 10
+end
 
 [pred] = stackedAEPredict(stackedAETheta, inputSize, hiddenSizeL2, ...
                           numClasses, netconfig, testData);
@@ -227,4 +275,4 @@ fprintf('After Finetuning Test Accuracy: %0.3f%%\n', accAfter * 100);
 % your code for errors, and make sure you are training on the 
 % entire data set of 60000 28x28 training images 
 % (unless you modified the loading code, this should be the case)
-save afterFineTuning
+% save afterFineTuning
