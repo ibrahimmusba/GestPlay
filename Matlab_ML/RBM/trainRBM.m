@@ -4,7 +4,7 @@ function [weights, b,d, h]= trainRBM(data, wts, epochs, learning_rate)
 % wts = weight matrix of dimension numHidden X numVisible  
 
 
-[numVisible numHidden] = size(wts');
+[numVisible, numHidden] = size(wts');
 
 weights= [zeros(numVisible,1), wts']; % insert zeros for bias
 weights = [zeros(1, numHidden+1); weights];
@@ -12,6 +12,8 @@ weights = [zeros(1, numHidden+1); weights];
 logistic = @(x) ((1+exp(-x)).^-1); 
 num_examples = size(data,1);
 data = [ones(num_examples,1), data]; % insert the first column of ones for bias 
+fprintf('\n RBM will run for epochs:%d\n', epochs)
+fprintf('\nIter \t error\n')
 for i=1:epochs
     % postive CD phase, the reality phase
     pos_hidden_activation   = data*weights;
@@ -36,7 +38,7 @@ for i=1:epochs
     weights = weights + learning_rate * ((pos_associations - neg_associations) / num_examples);
 
     error = sum(sum((data - neg_visible_probs).^2))/(size(data,1)*size(data,2));
-    [i error]
+    fprintf('%d \t\t%f\n', i, error);%disp([i error])
 
 end
 b= weights(1,2:end)';
