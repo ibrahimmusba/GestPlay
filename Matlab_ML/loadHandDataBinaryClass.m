@@ -1,10 +1,15 @@
-function [X_train Y_train X_test Y_test IMG IMG_labels] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray)
+function [X_train Y_train X_test Y_test IMG IMG_labels] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray, wantHoG)
 %folder_pos and folder_neg are folder names which contain all the image
 %files. The images should all be of the same dimension. folder_neg can be
 %an array of folder names having negative images
 
+if ~exist('wantHoG', 'var')
+    wantHoG = 0;
+end
+
 X = []; %Feature Vectors
 Y = []; %Output Labels
+H = [];
 IMG = [];
 ind = 1;
 
@@ -17,6 +22,9 @@ for i = 1:length(folder_pos)
     for k = 1:length(posImageFiles)
         filename = posImageFiles(k).name;
         img = imread([folder_pos{i} '\' filename]);
+        if wantHoG
+            H = [H, HoG(img)];
+        end
         if (size(img,3) == 3 && wantGray)
             img = rgb2gray(img);
         end
@@ -36,6 +44,9 @@ for i = 1:length(folder_neg)
     for k = 1:length(negImageFiles)
         filename = negImageFiles(k).name;
         img = imread([folder_neg{i} '\' filename]);
+        if wantHoG
+            H = [H, HoG(img)];
+        end
         if (size(img,3) == 3 && wantGray)
             img = rgb2gray(img);
         end
@@ -56,6 +67,10 @@ X = X(:,randInd);
 Y = Y(:,randInd);
 IMG = IMG(:,:,:,randInd);
 IMG_labels = Y;
+if wantHoG
+    H = H(:,randInd);
+end
+    
 %% Normalize the data
 X = X./max(max(X));
 
@@ -71,11 +86,15 @@ X = X./max(max(X));
 %% Generate Train and Test Data 
 n_train = round(n_total*2/3);
 
-X_train = X(:,1:n_train);
+if wantHoG
+	X_train = H(:,1:n_train);
+    X_test  = H(:, n_train+1:end);
+else
+    X_train = X(:,1:n_train);
+    X_test  = X(:, n_train+1:end);
+end
+
 Y_train = Y(1:n_train);
-
-X_test = X(:, n_train+1:end);
 Y_test = Y(n_train+1:end);
-
 
 end
