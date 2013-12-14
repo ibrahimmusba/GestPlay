@@ -5,9 +5,7 @@ function [ folder_pos folder_neg ] = getBinaryClassFolderNames( handDataSetFolde
 %other images)
 
 %  neg_name{1} = '\random\randomPatches';
-neg_name{1} = '\randomPatches';
-neg_name{2} = '\random\randomPatches2';
-neg_name{3} = '\negative';
+
 
 
 switch gestureName
@@ -15,6 +13,9 @@ switch gestureName
         pos_name{1} = '\front';
         pos_name{2} = '\front\scaled';
         
+        neg_name{1} = '\randomPatches';
+        neg_name{2} = '\random\randomPatches2';
+        neg_name{3} = '\negative';
         neg_name{4} = '\right_front';
         neg_name{5} = '\right_back';
         neg_name{6} = '\left_front';
@@ -24,6 +25,9 @@ switch gestureName
         pos_name{1} = '\right_front';
         pos_name{2} = '\right_back';
         
+        neg_name{1} = '\randomPatches';
+        neg_name{2} = '\random\randomPatches2';
+        neg_name{3} = '\negative';
         neg_name{4} = '\front';
         neg_name{5} = '\front\scaled';
         neg_name{6} = '\left_front';
@@ -33,6 +37,9 @@ switch gestureName
         pos_name{1} = '\left_front';
         pos_name{2} = '\left_back';
         
+        neg_name{1} = '\randomPatches';
+        neg_name{2} = '\random\randomPatches2';
+        neg_name{3} = '\negative';
         neg_name{4} = '\front';
         neg_name{5} = '\front\scaled';
         neg_name{6} = '\right_front';
@@ -41,11 +48,25 @@ switch gestureName
     case 'uncentered'
          pos_name{1} = '\uncenteredAp\front';
         
+        neg_name{1} = '\randomPatches';
+        neg_name{2} = '\random\randomPatches2';
+        neg_name{3} = '\negative';
         neg_name{4} = '\right_front';
         neg_name{5} = '\right_back';
         neg_name{6} = '\left_front';
         neg_name{7} = '\left_back';
         
+    case 'negative'
+        pos_name{1} = '\randomPatches';
+        pos_name{2} = '\random\randomPatches2';
+        pos_name{3} = '\negative';
+        
+        neg_name{1} = '\front';
+        neg_name{2} = '\front\scaled';
+        neg_name{3} = '\right_front';
+        neg_name{4} = '\right_back';
+        neg_name{5} = '\left_front';
+        neg_name{6} = '\left_back';
     otherwise
         error('error in getFolderNames: gestureName not defined');
         
