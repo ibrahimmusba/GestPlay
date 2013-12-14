@@ -6,21 +6,22 @@ function [svmStruct] = HandHogTrainer(handDataSetFolder)
 %% Load all data
 addpath ../Matlab_common
 
-croppedSize = 'Cropped_144_112';
+%croppedSize = 'Cropped_144_112';
 %croppedSize = 'Cropped_112_88';
 %croppedSize = 'Cropped_88_64';
-%croppedSize = 'Cropped_64_48';
+croppedSize = 'Cropped_64_48';
 
-isCentered = 0; % do you want centered or uncentered
-gestureName = 'front';
+% isCentered = 0; % do you want centered or uncentered
+gestureName = 'right';
 
 wantGray = 1 ; % set it 1 if you want gray images 
+wantHoG = 1;
 
 
 [ folder_pos folder_neg ] = getBinaryClassFolderNames( handDataSetFolder, ...
                                             gestureName, croppedSize );
 
-[X_train Y_train X_test Y_test IMAGES IMAGES_labels H_train H_test] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray);
+[X_train Y_train X_test Y_test IMAGES IMAGES_labels H_train H_test] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray, wantHoG);
 
 Y_train(find(Y_train == 0)) = -1;
 Y_test(find(Y_test == 0)) = -1;
@@ -43,7 +44,7 @@ figure;
 hold on;
 for i = 1:length(misclassified)
     subplot(5,5,i);
-    imshow(reshape(X_test(:,misclassified(i)),size(img)));
+    imshow(reshape(X_test(:,misclassified(i)),size(IMAGES(:,:,1,1))));
     if Y_test(misclassified(i)) == 1
         title('Front');
     else
