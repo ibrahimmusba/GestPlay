@@ -22,7 +22,7 @@ switch gestureName
         
     case 'right'
         pos_name{1} = '\right_front';
-        pos_name{1} = '\right_back';
+        pos_name{2} = '\right_back';
         
         neg_name{4} = '\front';
         neg_name{5} = '\front\scaled';
@@ -31,7 +31,7 @@ switch gestureName
 
     case 'left'
         pos_name{1} = '\left_front';
-        pos_name{1} = '\left_back';
+        pos_name{2} = '\left_back';
         
         neg_name{4} = '\front';
         neg_name{5} = '\front\scaled';
