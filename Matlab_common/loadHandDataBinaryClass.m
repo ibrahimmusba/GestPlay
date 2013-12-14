@@ -1,4 +1,4 @@
-function [X_train Y_train X_test Y_test IMG IMG_labels] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray, wantHoG)
+function [X_train Y_train X_test Y_test IMG IMG_labels H_train H_test] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray, wantHoG)
 %folder_pos and folder_neg are folder names which contain all the image
 %files. The images should all be of the same dimension. folder_neg can be
 %an array of folder names having negative images
@@ -86,12 +86,15 @@ X = X./max(max(X));
 %% Generate Train and Test Data 
 n_train = round(n_total*2/3);
 
+X_train = X(:,1:n_train);
+X_test  = X(:, n_train+1:end);
+    
 if wantHoG
-	X_train = H(:,1:n_train);
-    X_test  = H(:, n_train+1:end);
+	H_train = H(:,1:n_train);
+    H_test  = H(:, n_train+1:end);
 else
-    X_train = X(:,1:n_train);
-    X_test  = X(:, n_train+1:end);
+    H_train = [];
+    H_test  = [];
 end
 
 Y_train = Y(1:n_train);

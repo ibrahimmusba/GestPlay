@@ -3,89 +3,28 @@ function [svmStruct] = HandHogTrainer(handDataSetFolder)
 %folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\croppedResized';  % write the appropriate folder name here
 % croppedHandDimension = [64 48];
 
-%% Setup positive and negative folders
+%% Load all data
+addpath ../Matlab_common
+
 croppedSize = 'Cropped_144_112';
 %croppedSize = 'Cropped_112_88';
 %croppedSize = 'Cropped_88_64';
 %croppedSize = 'Cropped_64_48';
 
+isCentered = 0; % do you want centered or uncentered
+gestureName = 'front';
 
-%Positive
-folder_pos{1} = [handDataSetFolder  '\Processed\front\'   croppedSize];
-folder_pos{2} = [handDataSetFolder  '\Processed\front\'   'Cropped_scaled_144_112'];
-
-%Random Patches
-folder_neg{1} = [handDataSetFolder  '\Processed\random\randomPatches\'  croppedSize];
-folder_neg{2} = [handDataSetFolder  '\Processed\random\randomPatches2\' croppedSize];
-folder_neg{3} = [handDataSetFolder  '\Processed\negative\'              croppedSize];
-
-%Other Hands
-folder_neg{4} = [handDataSetFolder  '\Processed\left_front\' croppedSize];
-folder_neg{5} = [handDataSetFolder  '\Processed\right_front\' croppedSize];
-folder_neg{6} = [handDataSetFolder  '\Processed\right_back\' croppedSize];
-%folder_neg{6} = [handDataSetFolder  '\Processed\front\scaled1'];
-
-H = []; %Feature Vectors
-X = []; %Image Vector
-Y = []; %Output Labels
+wantGray = 1 ; % set it 1 if you want gray images 
 
 
-n_total = 0;
+[ folder_pos folder_neg ] = getBinaryClassFolderNames( handDataSetFolder, ...
+                                            gestureName, croppedSize );
 
-%% Read all positive examples
-fprintf('Reading all Positive Examples and calculating HoG... \n')
-for i = 1:length(folder_pos)
-    posImageFiles = dir([folder_pos{i} '\' '*.jpg']); 
-    for k = 1:length(posImageFiles)
-        filename = posImageFiles(k).name;
-        img = imread([folder_pos{i} '\' filename]);
-        H = [H, HoG(img)];
-        if (size(img,3) == 3)
-            img = rgb2gray(img);
-        end
-        X = [X, img(:)];
-    end
-    Y = [Y, ones(1,length(posImageFiles))];
-    n_total = n_total + length(posImageFiles);
-    fprintf('Read %d images from positive #%d \n', length(posImageFiles), i);
-end
+[X_train Y_train X_test Y_test IMAGES IMAGES_labels H_train H_test] = loadHandDataBinaryClass(folder_pos, folder_neg,wantGray);
 
-%% Read all negative examples
-fprintf('Reading all Negative Examples and calculating HoG... \n')
-for i = 1:length(folder_neg)
-    negImageFiles = dir([folder_neg{i} '\' '*.jpg']); 
-    for k = 1:length(negImageFiles)
-        filename = negImageFiles(k).name;
-        img = imread([folder_neg{i} '\' filename]);        
-        H = [H, HoG(img)];
-        if (size(img,3) == 3)
-            img = rgb2gray(img);
-        end
-        X = [X, img(:)];
-    end
-    Y = [Y, -1.*ones(1,length(negImageFiles))];
-    n_total = n_total + length(negImageFiles);
-    fprintf('Read %d images from negative #%d \n', length(negImageFiles), i);
-end
+Y_train(find(Y_train == 0)) = -1;
+Y_test(find(Y_test == 0)) = -1;
 
-
-%% Shuffle training data
-s = RandStream('mt19937ar','Seed',0);
-randInd = randperm(s,n_total);
-
-H = H(:,randInd);
-X = X(:,randInd);
-Y = Y(:,randInd);
-
-
-n_train = round(n_total*2/3);
-
-H_train = H(:,1:n_train);
-Y_train = Y(1:n_train);
-
-H_test = H(:, n_train+1:end);
-Y_test = Y(n_train+1:end);
-X_test = X(:, n_train+1:end);
 
 %% Train a SVM on the data
 fprintf('Start SVM training... \n')
