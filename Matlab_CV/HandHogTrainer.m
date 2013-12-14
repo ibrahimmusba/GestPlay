@@ -11,11 +11,13 @@ addpath ../Matlab_common
 %croppedSize = 'Cropped_88_64';
 croppedSize = 'Cropped_64_48';
 
-isCentered = 0; % do you want centered or uncentered
+% isCentered = 0; % do you want centered or uncentered
 gestureName = 'right';
 
 wantGray = 1 ; % set it 1 if you want gray images 
-wantHoG = 1; 
+wantHoG = 1;
+
+
 
 [ folder_pos folder_neg ] = getBinaryClassFolderNames( handDataSetFolder, ...
                                             gestureName, croppedSize )
