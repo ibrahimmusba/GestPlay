@@ -1,7 +1,10 @@
 function [X_train Y_train X_test Y_test IMG IMG_labels] = loadHandDataAllClass(folder_front, folder_right, folder_left, folder_neg,wantGray)
+
 %folder_pos and folder_neg are folder names which contain all the image
 %files. The images should all be of the same dimension. folder_neg can be
 %an array of folder names having negative images
+% argument color: if 0 will return grayscale images or if color = 1 then
+% will return color images
 
 X = []; %Feature Vectors
 Y = []; %Output Labels
@@ -55,6 +58,7 @@ for i = 1:length(folder_right)
     for k = 1:length(rightImageFiles)
         filename = rightImageFiles(k).name;
         img = imread([folder_right{i} '\' filename]);
+
         if (size(img,3) == 3 && wantGray)
             img = rgb2gray(img);
         end
