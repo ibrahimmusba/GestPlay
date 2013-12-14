@@ -136,7 +136,7 @@ if count==0 && waitCount <=0;
         % Run Hand Detector
         retVal = HandDetector(crop,svmStruct,isDisplayHandDection);
         if (retVal ==1) 
-        action= playMusic(action, player);
+%         action= playMusic(action, player);
         
         end
 

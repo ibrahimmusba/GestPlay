@@ -6,18 +6,19 @@ close all
 
 isDisplayVideo = 1; % Do NOT change .display the video
 isDisplayVelVector = 1; % to display the velocity vectors
-isDisplayHandDection = 0; % to display the hand detection
+isDisplayHandDection = 1; % to display the hand detection
 
 
 
-isCroppedDisplay = 0 ;  % set to 0 if dont want to display
+isCroppedDisplay = 1 ;  % set to 0 if dont want to display
 isImageWrite = 0 ;      % set to 0 if dont want to write
 
 displayFullVelMap = 0;  % set to 0 if dont want to display full vel map
 displayLocalVelMap= 0;  % set to 0 if dont want to display local vel map
 % when both local and full vel map is enabled, it displays only local vel
 %dataset_folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
-dataset_folder = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset';
+dataset_folder = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
+% dataset_folder = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset';
 
 display('loading the classifier....')
 % load([dataset_folder '\LearnedData\SVM_front_p2.mat']);
@@ -62,15 +63,15 @@ vidSource = 'camera'; % selects the camera as source
 % vidSource = 'LipVid.avi'; % selects the video file
 
 %% music player setting
-songPath = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\songs\';
-
-songName = [songPath 'kolaveri.mp3'];
-display('loading soundfile...')
-[y,Fs,NBITS,OPTS] = readMp3(songName,[400000,5000000]);
-player = audioplayer(y, Fs);
-action = 'play';
-play(player);
-pause(player);
+% songPath = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\songs\';
+% 
+% songName = [songPath 'kolaveri.mp3'];
+% display('loading soundfile...')
+% [y,Fs,NBITS,OPTS] = readMp3(songName,[400000,5000000]);
+% player = audioplayer(y, Fs);
+% action = 'play';
+% play(player);
+% pause(player);
 
 %% set paramters for frame lag 
 count =-1;
@@ -149,7 +150,7 @@ while(1)
     
 end
    
-pause(player)
+% pause(player)
 close all
 
 % close the camera and clear the memory 
