@@ -1,10 +1,6 @@
 function [] = checkStackedAECost()
 
 % Check the gradients for the stacked autoencoder
-%
-% In general, we recommend that the creation of such files for checking
-% gradients when you write new cost functions.
-%
 
 %% Setup random data / small model
 inputSize = 4;
@@ -44,6 +40,3 @@ diff = norm(numgrad-grad)/norm(numgrad+grad);
 disp(diff); % Should be small. In our implementation, these values are
             % usually less than 1e-9.
 
-            % When you got this working, Congratulations!!! 
-            
-            
