@@ -19,20 +19,8 @@ convolvedWidth = size(convolvedFeatures, 4);
 pooledFeatures = zeros(numFeatures, numImages, floor(convolvedHeight / poolDim), floor(convolvedWidth / poolDim));
 Ncols=floor(convolvedWidth / poolDim);
 Nrows=floor(convolvedHeight / poolDim);
-% -------------------- YOUR CODE HERE --------------------
-% Instructions:
-%   Now pool the convolved features in regions of poolDim x poolDim,
-%   to obtain the 
-%   numFeatures x numImages x (convolvedDim/poolDim) x (convolvedDim/poolDim) 
-%   matrix pooledFeatures, such that
-%   pooledFeatures(featureNum, imageNum, poolRow, poolCol) is the 
-%   value of the featureNum feature for the imageNum image pooled over the
-%   corresponding (poolRow, poolCol) pooling region 
-%   (see http://ufldl/wiki/index.php/Pooling )
-%   
-%   Use mean pooling here.
-% -------------------- YOUR CODE HERE --------------------
-
+% we use mean pooling
+% to use max pooling, replace 'mean' by 'max' everywhere
 for imageNum = 1:numImages
   for featureNum = 1:numFeatures
      for poolRow=1:Nrows

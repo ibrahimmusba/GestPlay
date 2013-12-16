@@ -1,13 +1,5 @@
 function [cost,grad,features] = sparseAutoencoderLinearCost(theta, visibleSize, hiddenSize, ...
                                                             lambda, sparsityParam, beta, data)
-% -------------------- YOUR CODE HERE --------------------
-% Instructions:
-%   Copy sparseAutoencoderCost in sparseAutoencoderCost.m from your
-%   earlier exercise onto this file, renaming the function to
-%   sparseAutoencoderLinearCost, and changing the autoencoder to use a
-%   linear decoder.
-% -------------------- YOUR CODE HERE --------------------        
-
 
 % visibleSize: the number of input units (probably 64) 
 % hiddenSize: the number of hidden units (probably 25) 
@@ -34,24 +26,8 @@ W2grad = zeros(size(W2));
 b1grad = zeros(size(b1)); 
 b2grad = zeros(size(b2));
 
-%% ---------- YOUR CODE HERE --------------------------------------
-%  Instructions: Compute the cost/optimization objective J_sparse(W,b) for the Sparse Autoencoder,
-%                and the corresponding gradients W1grad, W2grad, b1grad, b2grad.
-%
-% W1grad, W2grad, b1grad and b2grad should be computed using backpropagation.
-% Note that W1grad has the same dimensions as W1, b1grad has the same dimensions
-% as b1, etc.  Your code should set W1grad to be the partial derivative of J_sparse(W,b) with
-% respect to W1.  I.e., W1grad(i,j) should be the partial derivative of J_sparse(W,b) 
-% with respect to the input parameter W1(i,j).  Thus, W1grad should be equal to the term 
-% [(1/m) \Delta W^{(1)} + \lambda W^{(1)}] in the last block of pseudo-code in Section 2.2 
-% of the lecture notes (and similarly for W2grad, b1grad, b2grad).
+%% W1grad, W2grad, b1grad and b2grad should be computed using backpropagation.
 % 
-% Stated differently, if we were using batch gradient descent to optimize the parameters,
-% the gradient descent update to W1 would be W1 := W1 - alpha * W1grad, and similarly for W2, b1, b2. 
-% 
-
-
-
 m = size(data,2);
 
 % Compute forward pass
@@ -78,7 +54,7 @@ b2grad = 1./m*sum(gamma3,2);
 
 %Cost
 %cost1 = 1/(2*size(data,2))*trace((data - a3)'*(data - a3));
-cost1 = 1/(2*size(data,2))*sum(sum((data - a3).^2));
+cost1 = 1/(2*size(data,2))*sum(sum((data - a3).^2));%modified equation
 cost2 = (lambda/2)*(sum(sum(W1.^2)) + sum(sum(W2.^2)));
 cost3 = beta.*sum(rho.*(log(rho./rho_hat))+(1-rho).*(log((1-rho)./(1-rho_hat))));
 cost =  cost1 + cost2 + cost3;
@@ -92,10 +68,7 @@ grad = [W1grad(:) ; W2grad(:) ; b1grad(:) ; b2grad(:)];
 
 end
 
-%-------------------------------------------------------------------
-% Here's an implementation of the sigmoid function, which you may find useful
-% in your computation of the costs and the gradients.  This inputs a (row or
-% column) vector (say (z1, z2, z3)) and returns (f(z1), f(z2), f(z3)). 
+
 
 function sigm = sigmoid(x)
   

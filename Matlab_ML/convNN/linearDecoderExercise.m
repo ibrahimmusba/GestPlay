@@ -41,7 +41,6 @@ numGrad = computeNumericalGradient( @(x) sparseAutoencoderLinearCost(x, debugvis
 disp([numGrad grad]); 
 
 diff = norm(numGrad-grad)/norm(numGrad+grad);
-% Should be small. In our implementation, these values are usually less than 1e-9.
 disp(diff); 
 
 assert(diff < 1e-9, 'Difference too large. Check your gradient computation again');
@@ -56,14 +55,11 @@ assert(diff < 1e-9, 'Difference too large. Check your gradient computation again
 
 %% Load patches
 %  In this step, we load 100k patches sampled from the hand dataset and
-%  visualize them. Note that these patches have been scaled to [0,1]
+%  visualize them. 
 
 % load([handDatasetFolder 'stlSampledPatches.mat']);
-
-
-%TODO
 load([handDatasetFolder 'MS4_patches_color_100k.mat']);
-patches = patches/255;
+patches = patches/255;%Note that these patches have been scaled to [0,1]
 
 
 figure
@@ -118,7 +114,7 @@ fprintf('Saving learned features and preprocessing matrices...\n');
 save([handDatasetFolder 'MS2Features_B5_L1.mat'], 'optTheta', 'ZCAWhite', 'meanPatch');
 fprintf('Saved\n');
 
-%% STEP 2d: Visualize learned features
+%% Visualize learned features
 
 W = reshape(optTheta(1:visibleSize * hiddenSize), hiddenSize, visibleSize);
 b = optTheta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);

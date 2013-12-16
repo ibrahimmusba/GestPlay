@@ -20,36 +20,10 @@ imageHeight = size(images, 1);
 imageWidth = size(images, 2);
 imageChannels = size(images, 3);
 
-convolvedFeatures = zeros(numFeatures, numImages, imageHeight - patchDim + 1, imageWidth - patchDim + 1);
-
-% Instructions:
-%   Convolve every feature with every large image here to produce the 
-%   numFeatures x numImages x (imageDim - patchDim + 1) x (imageDim - patchDim + 1) 
-%   matrix convolvedFeatures, such that 
-%   convolvedFeatures(featureNum, imageNum, imageRow, imageCol) is the
-%   value of the convolved featureNum feature for the imageNum image over
-%   the region (imageRow, imageCol) to (imageRow + patchDim - 1, imageCol + patchDim - 1)
-%
-% Expected running times: 
-%   Convolving with 100 images should take less than 3 minutes 
-%   Convolving with 5000 images should take around an hour
-%   (So to save time when testing, you should convolve with less images, as
-%   described earlier)
-
-% -------------------- YOUR CODE HERE --------------------
-% Precompute the matrices that will be used during the convolution. Recall
-% that you need to take into account the whitening and mean subtraction
-% steps
-
-
-
-
-
-
 % --------------------------------------------------------
-
+% initialize a matrix of zeros
 convolvedFeatures = zeros(numFeatures, numImages, imageHeight - patchDim + 1, imageWidth - patchDim + 1);
- WTx_bar = W*ZCAWhite*meanPatch;
+ WTx_bar = W*ZCAWhite*meanPatch; % prewhitening
  W= W*ZCAWhite;
 for imageNum = 1:numImages
   for featureNum = 1:numFeatures
@@ -61,9 +35,7 @@ for imageNum = 1:numImages
     for channel = 1:imageChannels
 
       % Obtain the feature (patchDim x patchDim) needed during the convolution
-      % ---- YOUR CODE HERE ----
-%       feature = zeros(8,8); % You should replace this
-      feature = W(featureNum,(channel-1)*(patchDim*patchDim)+1:channel*(patchDim*patchDim));
+       feature = W(featureNum,(channel-1)*(patchDim*patchDim)+1:channel*(patchDim*patchDim));
       feature = reshape(feature,patchDim,patchDim);   
         
       % ------------------------
@@ -74,8 +46,6 @@ for imageNum = 1:numImages
       % Obtain the image
       im = squeeze(images(:, :, channel, imageNum));
       % Convolve "feature" with "im", adding the result to convolvedImage
-      % be sure to do a 'valid' convolution
-      % ---- YOUR CODE HERE ----
        convolvedImage = convolvedImage +conv2(im,feature,'valid'); 
       
       
@@ -85,8 +55,6 @@ for imageNum = 1:numImages
     end
     
     % Subtract the bias unit (correcting for the mean subtraction as well)
-    % Then, apply the sigmoid function to get the hidden activation
-    % ---- YOUR CODE HERE ----
     convolvedImage = convolvedImage +b(featureNum) - WTx_bar(featureNum);
      
     convolvedImage = 1./(1+exp(-convolvedImage));  % compute the sigmoid
