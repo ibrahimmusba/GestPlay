@@ -1,4 +1,4 @@
-function [svmStruct] = HandHogTrainer(handDataSetFolder)
+function [svmStruct] = HandHogTrainer(handDataSetFolder, gestureName)
 
 %folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\croppedResized';  % write the appropriate folder name here
 % croppedHandDimension = [64 48];
@@ -12,7 +12,9 @@ addpath ../Matlab_common
 croppedSize = 'Cropped_64_48';
 
 % isCentered = 0; % do you want centered or uncentered
-gestureName = 'right';
+if (~exist('gestureName','var'))
+    gestureName = 'front';
+end
 
 wantGray = 1 ; % set it 1 if you want gray images 
 wantHoG = 1;
