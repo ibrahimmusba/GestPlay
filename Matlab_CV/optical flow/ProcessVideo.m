@@ -6,31 +6,30 @@ close all
 
 isDisplayVideo = 1; % Do NOT change .display the video
 isDisplayVelVector = 1; % to display the velocity vectors
-isDisplayHandDection = 1; % to display the hand detection
+isDisplayHandDection = 0; % to display the hand detection
 
 
 
-isCroppedDisplay = 1 ;  % set to 0 if dont want to display
+isCroppedDisplay = 0 ;  % set to 0 if dont want to display
 isImageWrite = 0 ;      % set to 0 if dont want to write
 
 displayFullVelMap = 0;  % set to 0 if dont want to display full vel map
 displayLocalVelMap= 0;  % set to 0 if dont want to display local vel map
 % when both local and full vel map is enabled, it displays only local vel
 %dataset_folder = 'C:\Users\imusba\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
-dataset_folder = 'D:\Dropbox\CLASS STUFF\Project_442_545\Hand Database\dataset';
-% dataset_folder = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset';
+dataset_folder = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset';
 
 display('loading the classifier....')
 % load([dataset_folder '\LearnedData\SVM_front_p2.mat']);
-load([dataset_folder '\LearnedData\SVM_front_p2_scaled.mat']);
-% load([dataset_folder '\LearnedData\SVM_front_p2_scaled_othernegative.mat']);
+% load([dataset_folder '\LearnedData\SVM_front_p2_scaled.mat']);
+load([dataset_folder '\LearnedData\SVM_front_p2_scaled_othernegative.mat']);
 
 addpath ../
 addpath soundGui
 
 %% set camera parameters
 camInfo = imaqhwinfo('winvideo',1);
-supportedVid = camInfo.SupportedFormats;
+supportedVid = camInfo.SupportedFormats
 % chose the width and height based on above information. Don't keep it in
 % too high resolution
 width = 320; 
@@ -41,7 +40,7 @@ flowRes = 30 ; %flow resolution
 scale =8; %to scale the vectors by desired amount
 
 
-velThresh = 3;
+velThresh = 4;
 winSiz = 5; % decides how many flow vectors we want to consider to find the centroid
 
 if 2*winSiz+1 >flowRes
@@ -64,37 +63,48 @@ vidSource = 'camera'; % selects the camera as source
 
 %% music player setting
 % songPath = 'C:\Users\Apexit\Dropbox\courses\fall-13\fall-13\442\project\Papers_Project_442_545\Hand Database\dataset\songs\';
-% 
-% songName = [songPath 'kolaveri.mp3'];
-% display('loading soundfile...')
-% [y,Fs,NBITS,OPTS] = readMp3(songName,[400000,5000000]);
-% player = audioplayer(y, Fs);
-% action = 'play';
-% play(player);
-% pause(player);
+% songs{1} = 'abkeSawan.mp3';
+% songName = [songPath songs{1}];
 
+songs = struct;
+[songs songPath] = uigetfile('*.mp3','MultiSelect', 'on');
+if (iscell(songs))
+    songName = [songPath songs{1}];
+    NumSongs = length(songs);
+else
+    songName = [songPath songs];
+    NumSongs = 1;
+end
+songNumber =0;
+display('loading soundfile...')
+for i =1: NumSongs
+    [y{i},Fs{i},NBITS,OPTS] = readMp3([songPath songs{i}],[400000,5000000]);
+  file=i
+end
+
+  player = audioplayer(y{1}, Fs{1});
+    action = 'play';
+    play(player);
+    pause(player);
 %% set paramters for frame lag 
 count =-1;
 waitCount = -1;
 
-% delayCount =floor(velThresh/2) ; % set after how many count you want to take the snapshot;
-delayCount =max(ceil(velThresh/2),2) ; % set after how many count you want to take the snapshot;
+delayCount =floor(velThresh/2) ; % set after how many count you want to take the snapshot;
+delayCount =ceil(velThresh/2) ; % set after how many count you want to take the snapshot;
 snapShotsGap = 4; % set after how many frames you want to take another snapshot
 % open the video
 openVideo; % sets the video parameters and open a video object
 
 % create a folder to save the cropped image
-if(isImageWrite)
-    path = '';
-    folderCropped = [path 'Cropped'];
-    folderCroppedColor = [path 'CroppedColor'];
+path = '';
+folderCropped = [path 'Cropped'];
+folderCroppedColor = [path 'CroppedColor'];
 
-    mkdir(folderCropped);
-    mkdir(folderCroppedColor);
-    croppedFiles = dir([folderCropped, '\','*.jpg']);
-    cropName = length(croppedFiles);
-end
-
+mkdir(folderCropped);
+mkdir(folderCroppedColor);
+croppedFiles = dir([folderCropped, '\','*.jpg']);
+cropName = length(croppedFiles);
 % the first frame! 
 frameNum=1; % time index for frames
 image = fetchFrame(vid, frameNum, vidSource);
@@ -150,7 +160,7 @@ while(1)
     
 end
    
-% pause(player)
+pause(player)
 close all
 
 % close the camera and clear the memory 

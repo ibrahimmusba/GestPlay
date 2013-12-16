@@ -119,9 +119,8 @@ if count==0 && waitCount <=0;
         colorCrop(:,:,1) = image(starty:endy,startx:endx,1);
         colorCrop(:,:,2) = image(starty:endy,startx:endx,2);
         colorCrop(:,:,3) = image(starty:endy,startx:endx,3);
-        
+        cropName = cropName+1;
         if(isImageWrite)
-            cropName = cropName+1;
             imwrite(crop,[folderCropped, '\', num2str(cropName) '.jpg'],'jpg');
             imwrite(colorCrop,[folderCroppedColor, '\', num2str(cropName) '.jpg'],'jpg');
         end
@@ -135,9 +134,41 @@ if count==0 && waitCount <=0;
         
         % Run Hand Detector
         retVal = HandDetector(crop,svmStruct,isDisplayHandDection);
-        if (retVal ==1) 
+%         if (retVal ==1) 
 %         action= playMusic(action, player);
-        
+%         
+%         end
+%         
+        % play music: 
+        switch retVal
+            case 1                
+                 switch action
+                    case 'play'
+                        action
+                        
+% %                         this does the next song
+%                         songNumber = mod(songNumber+1,NumSongs)
+%                         if(~songNumber) 
+%                             songNumber = NumSongs;
+%                         end
+%                                                
+%                         player = audioplayer(y{songNumber}, Fs{songNumber});
+
+                        resume(player);
+                        clear action;
+                        action = 'pause';
+                       
+                    case 'pause'
+                        action
+                        pause(player);
+                        clear action;
+                        action = 'play';
+       
+                 end
+
+            case 0
+              
+%                 pause(1)
         end
 
         %           end % end statement for above if condtion
